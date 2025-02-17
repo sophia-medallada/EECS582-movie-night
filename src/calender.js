@@ -1,3 +1,8 @@
+// Authors: Sophia, Eli, Damian, Matthew and Abraham
+// Date: 2/13/25
+// Last Modified: 2/16/25
+// Purpose: Controls behavior and logic for the calender portion of the application.
+
 // Calender code sourced from https://www.geeksforgeeks.org/how-to-design-a-simple-calendar-using-javascript/
 
 let date = new Date();
