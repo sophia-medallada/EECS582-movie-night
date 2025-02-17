@@ -1,8 +1,18 @@
-<!-- Calender code sourced from https://www.geeksforgeeks.org/how-to-design-a-simple-calendar-using-javascript/ -->
+<!-- 
+Authors: Sophia, Eli, Damian, Matthew and Abraham
+Date: 2/13/25
+Last Modified: 2/16/25
+Purpose: Sets up the webpage for the calendar. The users will be able to see their schudule.
+
+Calender code sourced from https://www.geeksforgeeks.org/how-to-design-a-simple-calendar-using-javascript/ 
+-->
 
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-
+<!--
+The head contains information such as the title of the page (shown in the brower tab),
+characters sets, fonts, stylesheets, and other information.
+-->
 <head>
     <meta charset="utf-8">
     <title>Calendar</title>
@@ -20,6 +30,10 @@
         <header class="calendar-header">
             <p class="calendar-current-date"></p>
             <div class="calendar-navigation">
+                <!--
+                calendar-naviagation contains information regarding calendar.
+                chevron_left navigates to the previous month and chevron_right navigates to the next month.
+                -->
                 <span id="calendar-prev" 
                       class="material-symbols-rounded">
                     chevron_left
@@ -30,7 +44,7 @@
                 </span>
             </div>
         </header>
-
+        <!--This section gives the days of the weeks to the user.-->
         <div class="calendar-body">
             <ul class="calendar-weekdays">
                 <li>Sun</li>
@@ -44,6 +58,7 @@
             <ul class="calendar-dates"></ul>
         </div>
     </div>
+    <!--Runs calender.js to fill out the information regarding the calendar such as the dates.-->
     <script src="calender.js"></script>
 
 </body>
