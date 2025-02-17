@@ -29,6 +29,7 @@ const SearchMovies = () => {
     };
 
     //Displays the search results on the main webpage in html
+    // Placeholder design for now
     return (
         <div>
             {/*onSubmit adds a form for users to submit queries on a search bar. */}

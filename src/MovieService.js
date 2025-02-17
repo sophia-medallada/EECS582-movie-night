@@ -12,8 +12,11 @@ const BASE_URL = "https://api.themoviedb.org/3";
 export const fetchMovies = async (query) => {
     //If the query is successful, then the results are stored in data and can be used later on such as showing results from the search bar.
     try {
+        // Construct request for https://api.themoviedb.org using qeury and API key
         const response = await fetch(`${BASE_URL}/search/movie?api_key=${API_KEY}&query=${query}`);
+        // Wait for the response
         const data = await response.json();
+        // Return the reponse, even if it contained no results
         return data.results || [];
     //If the query failed, then there will error given in the console about issue.
     } catch (error){
