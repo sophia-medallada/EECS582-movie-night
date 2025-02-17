@@ -1,11 +1,18 @@
+//*
+Authors: Sophia, Eli, Damian, Matthew and Abraham
+Date: 2/15/25
+Last Modified: 2/16/25
+Purpose: controls how the calender looks
+*//
 /* Calender code sourced from https://www.geeksforgeeks.org/how-to-design-a-simple-calendar-using-javascript/ */
 
+/*sets the margin, padding, and font type*/
 * {
     margin: 0;
     padding: 0;
     font-family: 'Poppins', sans-serif;
 }
-
+/* centers the calender */
 body {
     display: flex;
     background: #ef62da;
@@ -15,6 +22,7 @@ body {
     justify-content: center;
 }
 
+/*main calender box */
 .calendar-container {
     background: #fff;
     width: 450px;
@@ -22,6 +30,7 @@ body {
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
 }
 
+/* Header layout */
 .calendar-container header {
     display: flex;
     align-items: center;
@@ -29,6 +38,7 @@ body {
     justify-content: space-between;
 }
 
+/* Navigation buttons for next/prev month */
 header .calendar-navigation {
     display: flex;
 }
@@ -46,23 +56,26 @@ header .calendar-navigation span {
     font-size: 1.9rem;
 }
 
+/* fix spacing for the last navigation */
 .calendar-navigation span:last-child {
     margin-right: -10px;
 }
 
+/* hover effect for the buttons */
 header .calendar-navigation span:hover {
     background: #f2f2f2;
 }
-
+/* Displays the current date */
 header .calendar-current-date {
     font-weight: 500;
     font-size: 1.45rem;
 }
 
+/* Calender body that includes days and dates */
 .calendar-body {
     padding: 20px;
 }
-
+/* organizes weekdays and dates into a grid */
 .calendar-body ul {
     list-style: none;
     flex-wrap: wrap;
@@ -70,36 +83,42 @@ header .calendar-current-date {
     text-align: center;
 }
 
+/* Spaces the grid */
 .calendar-body .calendar-dates {
     margin-bottom: 20px;
 }
 
+/* styles each part of the calender day, while making it evenly across the week */
 .calendar-body li {
     width: calc(100% / 7);
     font-size: 1.07rem;
     color: #414141;
 }
 
+/* styling for the weekdays, e.g. Sun, Mon, etc. */
 .calendar-body .calendar-weekdays li {
     cursor: default;
     font-weight: 500;
 }
 
+/* Styling of the date numbers */
 .calendar-body .calendar-dates li {
     margin-top: 30px;
     position: relative;
     z-index: 1;
     cursor: pointer;
 }
-
+/* Blurs out the inactive dates from previous and next month */
 .calendar-dates li.inactive {
     color: #aaa;
 }
 
+/* highlights the active, selected dates */
 .calendar-dates li.active {
     color: #fff;
 }
 
+/* circular background for dates */
 .calendar-dates li::before {
     position: absolute;
     content: "";
@@ -112,10 +131,12 @@ header .calendar-current-date {
     transform: translate(-50%, -50%);
 }
 
+/*  background color to select date */
 .calendar-dates li.active::before {
     background: #6332c5;
 }
 
+/* hover effect for the unselected dates */
 .calendar-dates li:not(.active):hover::before {
     background: #e4e1e1;
 }
