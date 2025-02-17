@@ -1,3 +1,7 @@
+// Authors: Sophia, Eli, Damian, Matthew and Abraham
+// Date: 2/16/25
+// Last Modified: 2/16/25
+// Purpose: dynamic list where users can add and remove items
 import React, { useState } from 'react';
 
 function DynamicList() {
@@ -20,18 +24,22 @@ function DynamicList() {
   return (
     <div>
       <h1>Dynamic List</h1>
+      {/* adds new items */}
       <input 
         type="text" 
         value={inputValue} 
         onChange={(e) => setInputValue(e.target.value)}
         placeholder="Add a new item"
       />
+      {/* button to add item to the list */}
       <button onClick={addItem}>Add</button>
 
+      {/* displays the list of items*/}
       <ul>
         {items.map((item, index) => (
           <li key={index}>
             {item} 
+            {/* button to delete the item*/}
             <button onClick={() => deleteItem(index)}>Delete</button>
           </li>
         ))}
