@@ -2,6 +2,7 @@
 //Date: 2/13/25
 //Last Modified: 2/27/25
 //Purpose: Adds search functionality to the website using the TMDB API
+import "./SearchMovies.css";
 import React, { useState } from "react";
 import { fetchMovies } from "./MovieService";
 
@@ -35,9 +36,9 @@ const SearchMovies = () => {
     //Displays the search results on the main webpage in html
     // Placeholder design for now
     return (
-        <div>
+        <div className="search-container">
             {/*onSubmit adds a form for users to submit queries on a search bar. */}
-            <form onSubmit={handleSearch}>
+            <form className="search=bar" onSubmit={handleSearch}>
                 <input
                     type="text"
                     placeholder="Search for a movie..."
@@ -45,14 +46,14 @@ const SearchMovies = () => {
                     onChange={(e) => setQuery(e.target.value)}
                 />
                 <button type="submit">Search</button>
-                
+
                 {/*Replace handle filter with something that changes the search query*/} 
                 <button type="button" onClick={handleFilter}>Filter</button>
             </form>
             {/*The result from the query are shown to the user with the title and poster*/}
             <div>
                 {movies.map((movie) => (
-                    <div key={movie.id} style={{ marginBottom: "20px "}}>
+                    <div key={movie.id} className="movie-result">
                         <h3>{movie.title}</h3>
                         <img
                             src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
