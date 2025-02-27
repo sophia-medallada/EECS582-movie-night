@@ -1,6 +1,6 @@
 //Authors: Sophia, Eli, Damian, Matthew and Abraham
 //Date: 2/13/25
-//Last Modified: 2/16/25
+//Last Modified: 2/27/25
 //Purpose: Adds search functionality to the website using the TMDB API
 import React, { useState } from "react";
 import { fetchMovies } from "./MovieService";
@@ -28,6 +28,10 @@ const SearchMovies = () => {
         }
     };
 
+    const handleFilter = async(event) => {
+        console.log("filter button clicked");
+    }
+
     //Displays the search results on the main webpage in html
     // Placeholder design for now
     return (
@@ -41,17 +45,32 @@ const SearchMovies = () => {
                     onChange={(e) => setQuery(e.target.value)}
                 />
                 <button type="submit">Search</button>
+                
+                {/*Replace handle filter with something that changes the search query*/} 
+                <button type="button" onClick={handleFilter}>Filter</button>
             </form>
             {/*The result from the query are shown to the user with the title and poster*/}
             <div>
                 {movies.map((movie) => (
-                    <div key={movie.id}>
+                    <div key={movie.id} style={{ marginBottom: "20px "}}>
                         <h3>{movie.title}</h3>
                         <img
                             src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                             alt={movie.title}
+                            style={{ width: "200px", height: "300px" }}
                         />
+                        <div> {/*Placeholder buttons for calendar, favorites, watch later functionality*/} 
+                            <button onClick={() => console.log("Add to Calendar clicked for: ", movie.title)}>
+                                Add to Calendar
+                            </button>
+                            <button onClick={() => console.log("Add to Favorites clicked for: ", movie.title)}>
+                                Add to Favorites
+                            </button>
+                            <button onClick={() => console.log("Add to Watch Later clicked for: ", movie.title)}>
+                                Add to Watch Later
+                            </button>
                     </div>
+                </div>
                 ))}
             </div>
         </div>
