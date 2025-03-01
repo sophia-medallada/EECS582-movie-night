@@ -1,44 +1,71 @@
 //Authors: Sophia, Eli, Damian, Matthew and Abraham
 //Date: 2/13/25
-//Last Modified: 2/27/25
+//Last Modified: 3/1/25
 //Purpose: Adds search functionality to the website using the TMDB API
 import "./SearchMovies.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { fetchMovies } from "./MovieService";
+
+const availableTags = ["Action", "Drama", "Comedy", "Horror", "Sci-Fi", "Romance"];
 
 const SearchMovies = () => {
     const [query, setQuery] = useState("");
     const [movies, setMovies] = useState([]);
+    const [selectedTags, setSelectedTags] = useState([]);
+    const [filteredMovies, setFilteredMovies] = useState([]);
 
     //HandleSearch makes sure search bar is being used properly.
-    const handleSearch = async(event) => {
+    const handleSearch = async (event) => {
         event.preventDefault();
-        console.log("handleSearch called with ", query);
         //Logs that the search bar was empty
-        if (!query.trim()){
-            console.log("Empty search executed");
-        }
+        if (!query.trim()) return;
         //Uses the search and fetches and logs the results.
         try {
             const results = await fetchMovies(query);
             console.log("Fetched movies: ", results);
             setMovies(results);
+            setFilteredMovies(results); 
         //If an error occurs, then it is reported to the console
-        } catch (error){
+        } catch (error) {
             console.error("Error in handleSearch", error);
         }
     };
 
-    const handleFilter = async(event) => {
-        console.log("filter button clicked");
-    }
+    // Toggles tags on/off when clicked
+    const toggleTag = (tag) => {
+        setSelectedTags((prevTags) => {
+            const newTags = prevTags.includes(tag)
+                ? prevTags.filter((t) => t !== tag)  // Remove if already selected
+                : [...prevTags, tag]; // Add if not selected
+            console.log("Updated Selected Tags:", newTags);
+            return newTags;
+        });
+    };
+
+    // Apply filtering automatically when tags or movies change
+    useEffect(() => {
+        console.log("Selected tags:", selectedTags);
+        console.log("Movies before filter:", movies);
+
+        if (selectedTags.length === 0) {
+            setFilteredMovies(movies);
+            return;
+        }
+
+        const filtered = movies.filter((movie) =>
+            movie.genre_names.some((genre) => selectedTags.includes(genre))
+        );
+
+        console.log("Movies after filter:", filtered);
+        setFilteredMovies(filtered);
+    }, [selectedTags, movies]);
 
     //Displays the search results on the main webpage in html
-    // Placeholder design for now
+    // Placeholder design for now   
     return (
         <div className="search-container">
             {/*onSubmit adds a form for users to submit queries on a search bar. */}
-            <form className="search=bar" onSubmit={handleSearch}>
+            <form className="search-bar" onSubmit={handleSearch}>
                 <input
                     type="text"
                     placeholder="Search for a movie..."
@@ -46,37 +73,51 @@ const SearchMovies = () => {
                     onChange={(e) => setQuery(e.target.value)}
                 />
                 <button type="submit">Search</button>
-
-                {/*Replace handle filter with something that changes the search query*/} 
-                <button type="button" onClick={handleFilter}>Filter</button>
             </form>
-            {/*The result from the query are shown to the user with the title and poster*/}
-            <div>
-                {movies.map((movie) => (
-                    <div key={movie.id} className="movie-result">
-                        <h3>{movie.title}</h3>
-                        <img
-                            src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                            alt={movie.title}
-                            style={{ width: "200px", height: "300px" }}
-                        />
-                        <div> {/*Placeholder buttons for calendar, favorites, watch later functionality*/} 
-                            <button onClick={() => console.log("Add to Calendar clicked for: ", movie.title)}>
-                                Add to Calendar
-                            </button>
-                            <button onClick={() => console.log("Add to Favorites clicked for: ", movie.title)}>
-                                Add to Favorites
-                            </button>
-                            <button onClick={() => console.log("Add to Watch Later clicked for: ", movie.title)}>
-                                Add to Watch Later
-                            </button>
-                    </div>
-                </div>
+
+            <div className="tag-filter">
+                {availableTags.map((tag) => (
+                    <button
+                        key={tag}
+                        className={selectedTags.includes(tag) ? "tag-selected" : "tag"}
+                        onClick={() => toggleTag(tag)}
+                    >
+                        {tag}
+                    </button>
                 ))}
+            </div>
+
+            {/* Movie Results (Filtered) */}
+            <div>
+                {filteredMovies.length === 0 ? (
+                    <p>No movies found for the selected tags.</p>
+                ) : (
+                    filteredMovies.map((movie) => (
+                        <div key={movie.id} className="movie-result">
+                            <h3>{movie.title}</h3>
+                            <img
+                                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                                alt={movie.title}
+                            />
+                            <p>Genres: {movie.genre_names?.join(", ") || "N/A"}</p>
+                            {/*Placeholder buttons for calendar, favorites, watch later functionality*/} 
+                            <div className="button-group">
+                                <button onClick={() => console.log("Add to Calendar:", movie.title)}>
+                                    Add to Calendar
+                                </button>
+                                <button onClick={() => console.log("Add to Favorites:", movie.title)}>
+                                    Add to Favorites
+                                </button>
+                                <button onClick={() => console.log("Add to Watch Later:", movie.title)}>
+                                    Add to Watch Later
+                                </button>
+                            </div>
+                        </div>
+                    ))
+                )}
             </div>
         </div>
     );
-
 };
 
 export default SearchMovies;
