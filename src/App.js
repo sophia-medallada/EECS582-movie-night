@@ -3,7 +3,7 @@
 // Last Modified: 2/16/25
 // Purpose: Combines all the seperate application portions and bundles them together into a final render
 
-import logo from './logo.svg';
+//import logo from './logo.svg';
 import './App.css';
 import SearchMovies from "./SearchMovies";
 import DynamicList from "./watchlist";
