@@ -7,6 +7,7 @@
 import './App.css';
 import SearchMovies from "./SearchMovies";
 import DynamicList from "./watchlist";
+import TimeTable from './TimeTable';
 
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
       <h1>Movie Search</h1>
       <SearchMovies /> {/*renders the search bar and movie results*/}
       <DynamicList /> {/*renders the dynamic list used for the watchlist*/}
+      <TimeTable /> {/*Experimental test*/}
     </div>
   );
 }
