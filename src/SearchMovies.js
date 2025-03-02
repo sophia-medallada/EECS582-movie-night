@@ -112,6 +112,7 @@ const SearchMovies = () => {
                                 <button onClick={() => console.log("Add to Watch Later:", movie.title)}>
                                     Add to Watch Later
                                 </button>
+                                {/*Button that finds the streaming providers and prints them into the console*/}
                                 <button onClick={() => console.log(fetchProviders(movie.id))}> 
                                     See Providers
                                 </button>
