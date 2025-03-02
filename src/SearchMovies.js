@@ -5,6 +5,7 @@
 import "./SearchMovies.css";
 import React, { useState, useEffect } from "react";
 import { fetchMovies } from "./MovieService";
+import { fetchProviders } from "./MovieService";
 
 const availableTags = ["Action", "Drama", "Comedy", "Horror", "Sci-Fi", "Romance"];
 
@@ -100,7 +101,7 @@ const SearchMovies = () => {
                                 alt={movie.title}
                             />
                             <p>Genres: {movie.genre_names?.join(", ") || "N/A"}</p>
-                            {/*Placeholder buttons for calendar, favorites, watch later functionality*/} 
+                            {/*Placeholder buttons for calendar, favorites, watch later, view providers functionality*/} 
                             <div className="button-group">
                                 <button onClick={() => console.log("Add to Calendar:", movie.title)}>
                                     Add to Calendar
@@ -111,6 +112,10 @@ const SearchMovies = () => {
                                 <button onClick={() => console.log("Add to Watch Later:", movie.title)}>
                                     Add to Watch Later
                                 </button>
+                                <button onClick={() => console.log(fetchProviders(movie.id))}> 
+                                    See Providers
+                                </button>
+                                
                             </div>
                         </div>
                     ))
