@@ -51,3 +51,16 @@ export const fetchMovies = async (query) => {
         return [];
     }
 };
+
+// fetches the streaming providers for the films and shows
+export const fetchProviders = async (movie_id) => {
+    try {
+        const response = await fetch(`${BASE_URL}/movie/${movie_id}/watch/providers?api_key=${API_KEY}`);
+        const data = await response.json();
+        return data.results || [];
+    //If the query failed, then there will error given in the console about issue.
+    } catch (error){
+        console.error("Error fetching Movie Providers: ", error);
+        return [];
+    }
+}
