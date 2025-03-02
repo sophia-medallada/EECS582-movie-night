@@ -7,8 +7,10 @@ import React, { useState, useEffect } from "react";
 import { fetchMovies } from "./MovieService";
 import { fetchProviders } from "./MovieService";
 
+//list out all the available genres of movies
 const availableTags = ["Action", "Drama", "Comedy", "Horror", "Sci-Fi", "Romance"];
 
+//adds state of the functional components in the search movies 
 const SearchMovies = () => {
     const [query, setQuery] = useState("");
     const [movies, setMovies] = useState([]);
@@ -39,24 +41,25 @@ const SearchMovies = () => {
                 ? prevTags.filter((t) => t !== tag)  // Remove if already selected
                 : [...prevTags, tag]; // Add if not selected
             console.log("Updated Selected Tags:", newTags);
-            return newTags;
+            return newTags; 
         });
     };
 
     // Apply filtering automatically when tags or movies change
     useEffect(() => {
+        //prints the selected movies from the selected tags
         console.log("Selected tags:", selectedTags);
         console.log("Movies before filter:", movies);
-
+        
         if (selectedTags.length === 0) {
             setFilteredMovies(movies);
             return;
         }
-
+        
         const filtered = movies.filter((movie) =>
             movie.genre_names.some((genre) => selectedTags.includes(genre))
         );
-
+        
         console.log("Movies after filter:", filtered);
         setFilteredMovies(filtered);
     }, [selectedTags, movies]);
@@ -75,7 +78,7 @@ const SearchMovies = () => {
                 />
                 <button type="submit">Search</button>
             </form>
-
+            {/*To submit tags on the selected genres of tags*/}
             <div className="tag-filter">
                 {availableTags.map((tag) => (
                     <button
