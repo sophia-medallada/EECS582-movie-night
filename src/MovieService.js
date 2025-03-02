@@ -14,13 +14,16 @@ let cachedGenres = [];
 // Fetch genres once and store them
 export const fetchGenres = async () => {
     if (cachedGenres.length > 0) return cachedGenres;
-    
     try {
+        // Construct request for https://api.themoviedb.org using base url and API key
         const response = await fetch(`${BASE_URL}/genre/movie/list?api_key=${API_KEY}`);
+        //awaits for the response
         const data = await response.json();
+        //returns the response
         cachedGenres = data.genres || [];
-        console.log("Fetched genres:", cachedGenres); // Debugging step
+        console.log("Fetched genres:", cachedGenres); 
         return cachedGenres;
+    //gives an error message if it can't fetch the genres
     } catch (error) {
         console.error("Error fetching genres: ", error);
         return [];
