@@ -55,7 +55,7 @@ export const fetchMovies = async (query) => {
 // fetches the streaming providers for the films and shows
 export const fetchProviders = async (movie_id) => {
     try {
-        const response = await fetch(`${BASE_URL}/movie/${movie_id}/watch/providers?api_key=${API_KEY}`);
+        const response = await fetch(`${BASE_URL}/movie/${movie_id}/watch/providers?api_key=${API_KEY}&results=US`);
         const data = await response.json();
         return data.results || [];
     //If the query failed, then there will error given in the console about issue.
