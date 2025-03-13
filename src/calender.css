@@ -1,7 +1,7 @@
 /*
 * Authors: Sophia, Eli, Damian, Matthew and Abraham
 * Date: 2/15/25
-* Last Modified: 2/16/25
+* Last Modified: 3/13/25
 * Purpose: controls how the calender looks
 */
 /* Calender code sourced from https://www.geeksforgeeks.org/how-to-design-a-simple-calendar-using-javascript/ */
@@ -140,5 +140,12 @@ header .calendar-current-date {
 .calendar-dates li:not(.active):hover::before {
     background: #e4e1e1;
 }
+
+/* Styles for weekly view */
+.calendar-body .calendar-weekdays li,
+.calendar-body .calendar-dates li {
+    width: calc(100% / 7);
+}
+
 
 
