@@ -1,24 +1,19 @@
 // Authors: Sophia, Eli, Damian, Matthew and Abraham
 // Date: 2/13/25
 // Last Modified: 3/13/25
-// Purpose: Controls behavior and logic for the calender portion of the application.
+// Purpose: Controls behavior and logic for the calendar portion of the application.
+
 import React, { useState } from 'react';
 import './calender.css';
 import TimeTable from './TimeTable.js';
 
 function Calendar() {
   const [date, setDate] = useState(new Date());
-  const [view, setView] = useState('monthly'); // State for switching between monthly and weekly views
+  const [view, setView] = useState('monthly'); // monthly or weekly view
+  const [selectedDate, setSelectedDate] = useState(null); // for tracking clicked date
 
   const year = date.getFullYear();
   const month = date.getMonth();
-
-  // Test Movies for the time table
-  const movies = [
-    { id: 1, title: 'Inception', startTime: '10:00', duration: 148, color: '#3498db' },
-    { id: 2, title: 'The Matrix', startTime: '13:00', duration: 136, color: '#2ecc71' },
-    { id: 3, title: 'Interstellar', startTime: '16:00', duration: 169, color: '#9b59b6' },
-  ]
 
   const months = [
     "January", "February", "March", "April", "May", "June",
@@ -36,39 +31,58 @@ function Calendar() {
 
     // Previous month dates
     for (let i = dayone; i > 0; i--) {
-      days.push(<li key={`p-${i}`} className="inactive">{monthlastdate - i + 1}</li>);
+      days.push(
+        <li key={`p-${i}`} className="inactive">
+          {monthlastdate - i + 1}
+        </li>
+      );
     }
 
     // Current month dates
     for (let i = 1; i <= lastdate; i++) {
-      const isToday = i === new Date().getDate()
-        && month === new Date().getMonth()
-        && year === new Date().getFullYear();
+      const thisDate = new Date(year, month, i);
+      const isToday = thisDate.toDateString() === new Date().toDateString();
+      const isSelected = selectedDate && thisDate.toDateString() === selectedDate.toDateString();
 
       days.push(
-        <li key={`c-${i}`} className={isToday ? "active" : ""}>{i}</li>
+        <li
+          key={`c-${i}`}
+          className={`${isToday ? "active" : ""} ${isSelected ? "selected" : ""}`}
+          onClick={() => setSelectedDate(thisDate)}
+        >
+          {i}
+        </li>
       );
     }
 
     // Next month dates
     for (let i = dayend; i < 6; i++) {
-      days.push(<li key={`n-${i}`} className="inactive">{i - dayend + 1}</li>);
+      days.push(
+        <li key={`n-${i}`} className="inactive">
+          {i - dayend + 1}
+        </li>
+      );
     }
 
     return days;
   };
 
-  // Generate the weekly view (one week at a time)
+  // Generate the weekly view
   const generateWeeklyView = () => {
-    const startOfWeek = date.getDate() - date.getDay(); // Calculate the start of the week (Sunday)
+    const startOfWeek = date.getDate() - date.getDay(); // Sunday start
     const days = [];
 
     for (let i = startOfWeek; i < startOfWeek + 7; i++) {
       const currentDay = new Date(year, month, i);
       const isToday = currentDay.toDateString() === new Date().toDateString();
-      
+      const isSelected = selectedDate && currentDay.toDateString() === selectedDate.toDateString();
+
       days.push(
-        <li key={i} className={isToday ? "active" : ""}>
+        <li
+          key={i}
+          className={`${isToday ? "active" : ""} ${isSelected ? "selected" : ""}`}
+          onClick={() => setSelectedDate(currentDay)}
+        >
           {currentDay.getDate()}
         </li>
       );
@@ -104,6 +118,7 @@ function Calendar() {
           <button onClick={switchToWeekly}>Weekly View</button>
         </div>
       </header>
+
       <div className="calendar-body">
         {view === 'monthly' ? (
           <>
@@ -125,10 +140,18 @@ function Calendar() {
           </>
         )}
       </div>
-      <TimeTable initialMovies={movies}/>
+
+      {selectedDate && (
+        <div className="selected-date-display">
+          <p>Selected: {selectedDate.toDateString()}</p>
+        </div>
+      )}
+
+      <TimeTable selectedDate={selectedDate} />
     </div>
   );
 }
 
 export default Calendar;
+
 
