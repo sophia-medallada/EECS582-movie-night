@@ -147,5 +147,11 @@ header .calendar-current-date {
     width: calc(100% / 7);
 }
 
-
+.calendar-dates li.selected {
+    background-color: #4caf50;
+    color: white;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  
 
