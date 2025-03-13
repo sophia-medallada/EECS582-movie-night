@@ -6,14 +6,10 @@
 import React, { useState } from 'react';
 import './TimeTable.css';
 
-const TimeTable = () => {
+const TimeTable = ({ initialMovies = [], onMoviesChange}) => {
   // Sample initial movie data
   // Also holds all existing movies
-  const [movies, setMovies] = useState([
-    { id: 1, title: 'Inception', startTime: '10:00', duration: 148, color: '#3498db' },
-    { id: 2, title: 'The Matrix', startTime: '13:00', duration: 136, color: '#2ecc71' },
-    { id: 3, title: 'Interstellar', startTime: '16:00', duration: 169, color: '#9b59b6' },
-  ]);
+  const [movies, setMovies] = useState(initialMovies);
   
   // State used in new movie creations
   const [newMovie, setNewMovie] = useState({

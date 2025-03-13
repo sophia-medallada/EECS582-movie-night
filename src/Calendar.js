@@ -13,6 +13,13 @@ function Calendar() {
   const year = date.getFullYear();
   const month = date.getMonth();
 
+  // Test Movies for the time table
+  const movies = [
+    { id: 1, title: 'Inception', startTime: '10:00', duration: 148, color: '#3498db' },
+    { id: 2, title: 'The Matrix', startTime: '13:00', duration: 136, color: '#2ecc71' },
+    { id: 3, title: 'Interstellar', startTime: '16:00', duration: 169, color: '#9b59b6' },
+  ]
+
   const months = [
     "January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
@@ -118,7 +125,7 @@ function Calendar() {
           </>
         )}
       </div>
-      <TimeTable />
+      <TimeTable initialMovies={movies}/>
     </div>
   );
 }
