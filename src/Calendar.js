@@ -1,16 +1,14 @@
 // Authors: Sophia, Eli, Damian, Matthew and Abraham
 // Date: 2/13/25
-// Last Modified: 2/16/25
+// Last Modified: 3/13/25
 // Purpose: Controls behavior and logic for the calender portion of the application.
-
-// Calender code sourced from https://www.geeksforgeeks.org/how-to-design-a-simple-calendar-using-javascript/
-
-import React, {useState} from 'react';
-import './calender.css'; 
+import React, { useState } from 'react';
+import './calender.css';
 import TimeTable from './TimeTable.js';
 
 function Calendar() {
   const [date, setDate] = useState(new Date());
+  const [view, setView] = useState('monthly'); // State for switching between monthly and weekly views
 
   const year = date.getFullYear();
   const month = date.getMonth();
@@ -20,6 +18,7 @@ function Calendar() {
     "July", "August", "September", "October", "November", "December"
   ];
 
+  // Generate the monthly view
   const generateCalendar = () => {
     const dayone = new Date(year, month, 1).getDay();
     const lastdate = new Date(year, month + 1, 0).getDate();
@@ -52,12 +51,39 @@ function Calendar() {
     return days;
   };
 
+  // Generate the weekly view (one week at a time)
+  const generateWeeklyView = () => {
+    const startOfWeek = date.getDate() - date.getDay(); // Calculate the start of the week (Sunday)
+    const days = [];
+
+    for (let i = startOfWeek; i < startOfWeek + 7; i++) {
+      const currentDay = new Date(year, month, i);
+      const isToday = currentDay.toDateString() === new Date().toDateString();
+      
+      days.push(
+        <li key={i} className={isToday ? "active" : ""}>
+          {currentDay.getDate()}
+        </li>
+      );
+    }
+
+    return days;
+  };
+
   const goToPrev = () => {
-    setDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
+    setDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, prev.getDate()));
   };
 
   const goToNext = () => {
-    setDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
+    setDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, prev.getDate()));
+  };
+
+  const switchToWeekly = () => {
+    setView('weekly');
+  };
+
+  const switchToMonthly = () => {
+    setView('monthly');
   };
 
   return (
@@ -66,21 +92,36 @@ function Calendar() {
         <span id="calendar-prev" onClick={goToPrev}>&lt;</span>
         <p className="calendar-current-date">{`${months[month]} ${year}`}</p>
         <span id="calendar-next" onClick={goToNext}>&gt;</span>
+        <div>
+          <button onClick={switchToMonthly}>Monthly View</button>
+          <button onClick={switchToWeekly}>Weekly View</button>
+        </div>
       </header>
       <div className="calendar-body">
-        <ul className="calendar-weekdays">
-          <li>Sun</li><li>Mon</li><li>Tue</li><li>Wed</li><li>Thu</li><li>Fri</li><li>Sat</li>
-        </ul>
-        <ul className="calendar-dates">
-          {generateCalendar()}
-        </ul>
+        {view === 'monthly' ? (
+          <>
+            <ul className="calendar-weekdays">
+              <li>Sun</li><li>Mon</li><li>Tue</li><li>Wed</li><li>Thu</li><li>Fri</li><li>Sat</li>
+            </ul>
+            <ul className="calendar-dates">
+              {generateCalendar()}
+            </ul>
+          </>
+        ) : (
+          <>
+            <ul className="calendar-weekdays">
+              <li>Sun</li><li>Mon</li><li>Tue</li><li>Wed</li><li>Thu</li><li>Fri</li><li>Sat</li>
+            </ul>
+            <ul className="calendar-dates">
+              {generateWeeklyView()}
+            </ul>
+          </>
+        )}
       </div>
-      <>
-        <TimeTable />
-      </>
+      <TimeTable />
     </div>
-
   );
 }
 
 export default Calendar;
+
