@@ -8,13 +8,14 @@ import './calender.css';
 import TimeTable from './TimeTable.js';
 
 function Calendar() {
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(new Date()); //current date state
   const [view, setView] = useState('monthly'); // monthly or weekly view
   const [selectedDate, setSelectedDate] = useState(null); // for tracking clicked date
 
-  const year = date.getFullYear();
-  const month = date.getMonth();
+  const year = date.getFullYear(); //current year
+  const month = date.getMonth(); //current month
 
+  //all the months
   const months = [
     "January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
@@ -22,10 +23,10 @@ function Calendar() {
 
   // Generate the monthly view
   const generateCalendar = () => {
-    const dayone = new Date(year, month, 1).getDay();
-    const lastdate = new Date(year, month + 1, 0).getDate();
-    const dayend = new Date(year, month, lastdate).getDay();
-    const monthlastdate = new Date(year, month, 0).getDate();
+    const dayone = new Date(year, month, 1).getDay(); //day of the first week of month
+    const lastdate = new Date(year, month + 1, 0).getDate(); //last date of month
+    const dayend = new Date(year, month, lastdate).getDay(); //last day of the week
+    const monthlastdate = new Date(year, month, 0).getDate(); //last date of previous month
 
     const days = [];
 
@@ -41,13 +42,13 @@ function Calendar() {
     // Current month dates
     for (let i = 1; i <= lastdate; i++) {
       const thisDate = new Date(year, month, i);
-      const isToday = thisDate.toDateString() === new Date().toDateString();
-      const isSelected = selectedDate && thisDate.toDateString() === selectedDate.toDateString();
+      const isToday = thisDate.toDateString() === new Date().toDateString(); //checks if the day is today
+      const isSelected = selectedDate && thisDate.toDateString() === selectedDate.toDateString(); //checks if the day is selected
 
       days.push(
         <li
           key={`c-${i}`}
-          className={`${isToday ? "active" : ""} ${isSelected ? "selected" : ""}`}
+          className={`${isToday ? "active" : ""} ${isSelected ? "selected" : ""}`} //adds class for active and selected dates
           onClick={() => setSelectedDate(thisDate)}
         >
           {i}
@@ -72,15 +73,16 @@ function Calendar() {
     const startOfWeek = date.getDate() - date.getDay(); // Sunday start
     const days = [];
 
+    //fills in the dates for the weekly view
     for (let i = startOfWeek; i < startOfWeek + 7; i++) {
       const currentDay = new Date(year, month, i);
-      const isToday = currentDay.toDateString() === new Date().toDateString();
-      const isSelected = selectedDate && currentDay.toDateString() === selectedDate.toDateString();
+      const isToday = currentDay.toDateString() === new Date().toDateString(); //checks if the day is today
+      const isSelected = selectedDate && currentDay.toDateString() === selectedDate.toDateString(); // checks if the day is selected
 
       days.push(
         <li
           key={i}
-          className={`${isToday ? "active" : ""} ${isSelected ? "selected" : ""}`}
+          className={`${isToday ? "active" : ""} ${isSelected ? "selected" : ""}`}  //adds class for active and selected dates
           onClick={() => setSelectedDate(currentDay)}
         >
           {currentDay.getDate()}
@@ -91,18 +93,22 @@ function Calendar() {
     return days;
   };
 
+  //goes to the previous month
   const goToPrev = () => {
     setDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, prev.getDate()));
   };
 
+  //goes to the next month
   const goToNext = () => {
     setDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, prev.getDate()));
   };
 
+  //goes to weekly view
   const switchToWeekly = () => {
     setView('weekly');
   };
 
+  //goes to monthly view
   const switchToMonthly = () => {
     setView('monthly');
   };
