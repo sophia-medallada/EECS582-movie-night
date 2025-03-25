@@ -19,8 +19,17 @@ const TimeTable = ({ initialMovies = [], onMoviesChange}) => {
     color: '#e74c3c'
   });
 
-  // Hours to display (24-hour format)
-  const hours = Array.from({ length: 14 }, (_, i) => i + 8); // 8 AM to 9 PM
+  // Hours to display -- rolling 24 hour AM/PM schedule, starts at current time with ticks every 3 hours 
+  const now = new Date();
+  const currentHour = now.getHours();
+  const hours = Array.from({ length: 9 }, (_, i) => (currentHour + i * 3) % 24);
+  
+  const formatHour = (hour) => {
+    const period = hour >= 12 ? 'PM' : 'AM';
+    const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
+    return `${formattedHour} ${period}`;
+  };
+  
   
   // Convert time string (HH:MM) to minutes since start of day
   const timeToMinutes = (timeStr) => {
@@ -152,11 +161,12 @@ const TimeTable = ({ initialMovies = [], onMoviesChange}) => {
             {hours.map(hour => (
               <div key={hour} className="hour-marker">
                 <div className="hour-label">
-                  {hour}:00
+                  {formatHour(hour)}
                 </div>
               </div>
             ))}
           </div>
+
           
           {/* Movie blocks */}
           {movies.map(movie => { {/* Mapping goes through this code for each movie in the array */}
