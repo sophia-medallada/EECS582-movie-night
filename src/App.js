@@ -4,24 +4,33 @@
 // Purpose: Combines all the seperate application portions and bundles them together into a final render
 
 //import logo from './logo.svg';
-import './App.css';
+
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+
 import SearchMovies from "./SearchMovies";
-import DynamicList from "./watchlist";
-import Calendar from './Calendar';
-import ScheduledNotification from './NotifHandler';
+import SchedulePage from "./SchedulePage";
+
+import './App.css';
 
 
 function App() {
   return (
-    <div className="App">
-      <h1>Movie Search</h1>
-      <SearchMovies /> {/*renders the search bar and movie results*/}
-      <DynamicList /> {/*renders the dynamic list used for the watchlist*/}
-      <Calendar />
-      <ScheduledNotification /> 
-    </div>
+    <Router>
+      <div className="App">
+        <nav className="tab-nav">
+          <Link to="/search">Movie Search</Link>
+          <Link to="/schedule">Schedule</Link>
+        </nav>
+        <Routes>
+          <Route path="/search" element={<SearchMovies />} />
+          <Route path="/schedule" element={<SchedulePage />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
+
 
 export default App;
 
