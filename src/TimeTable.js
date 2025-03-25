@@ -6,7 +6,13 @@
 import React, { useState } from 'react';
 import './TimeTable.css';
 
-const TimeTable = ({ initialMovies = [], onMoviesChange}) => {
+const TimeTable = ({ initialMovies = [], onMoviesChange, selectedDate }) => {
+
+  const isToday = selectedDate.toDateString() === new Date().toDateString();
+  const startHour = isToday ? new Date().getHours() : 0;
+  const hours = Array.from({ length: Math.ceil((24 - startHour) / 3) }, (_, i) => (startHour + i * 3) % 24);
+
+
   // Sample initial movie data
   // Also holds all existing movies
   const [movies, setMovies] = useState(initialMovies);
@@ -22,7 +28,6 @@ const TimeTable = ({ initialMovies = [], onMoviesChange}) => {
   // Hours to display -- rolling 24 hour AM/PM schedule, starts at current time with ticks every 3 hours 
   const now = new Date();
   const currentHour = now.getHours();
-  const hours = Array.from({ length: 9 }, (_, i) => (currentHour + i * 3) % 24);
   
   const formatHour = (hour) => {
     const period = hour >= 12 ? 'PM' : 'AM';

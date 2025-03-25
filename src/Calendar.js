@@ -7,10 +7,10 @@ import React, { useState } from 'react';
 import './calender.css';
 import TimeTable from './TimeTable.js';
 
-function Calendar() {
-  const [date, setDate] = useState(new Date()); //current date state
-  const [view, setView] = useState('monthly'); // monthly or weekly view
-  const [selectedDate, setSelectedDate] = useState(null); // for tracking clicked date
+function Calendar({ selectedDate, onDateChange }) {
+  const [date, setDate] = useState(new Date()); // internal month/year control
+  const [view, setView] = useState('monthly');
+  //const [selectedDate, setSelectedDate] = useState(null); // for tracking clicked date
 
   const year = date.getFullYear(); //current year
   const month = date.getMonth(); //current month
@@ -20,6 +20,10 @@ function Calendar() {
     "January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
   ];
+
+  const handleDateClick = (newDate) => {
+    onDateChange(newDate); // tell parent component
+  };
 
   // Generate the monthly view
   const generateCalendar = () => {
@@ -49,7 +53,7 @@ function Calendar() {
         <li
           key={`c-${i}`}
           className={`${isToday ? "active" : ""} ${isSelected ? "selected" : ""}`} //adds class for active and selected dates
-          onClick={() => setSelectedDate(thisDate)}
+          onClick={() => handleDateClick(thisDate)}
         >
           {i}
         </li>
@@ -83,7 +87,7 @@ function Calendar() {
         <li
           key={i}
           className={`${isToday ? "active" : ""} ${isSelected ? "selected" : ""}`}  //adds class for active and selected dates
-          onClick={() => setSelectedDate(currentDay)}
+          onClick={() => handleDateClick(currentDay)}
         >
           {currentDay.getDate()}
         </li>
@@ -153,7 +157,6 @@ function Calendar() {
         </div>
       )}
 
-      <TimeTable selectedDate={selectedDate} />
     </div>
   );
 }
