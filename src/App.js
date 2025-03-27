@@ -8,10 +8,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 
-import SearchMovies from "./SearchMovies";
-import SchedulePage from "./SchedulePage";
+import SearchMovies from "./components/SearchMovies";
+import SchedulePage from "./components/SchedulePage";
 
-import './App.css';
+import './styles/App.css';
 
 
 function App() {
