@@ -1,7 +1,7 @@
-/*
+/* 
 //Authors: Sophia, Eli, Damian, Matthew and Abraham
 //Date: 2/27/25
-//Last Modified: 3/1/25
+//Last Modified: 3/30/25
 */
 
 .SearchMovies {
@@ -42,21 +42,32 @@
 
 .button-group {
     margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
 }
 
 .button-group button {
-    margin: 5px;
-    padding: 8px 12px;
+    padding: 10px 15px;
     border: none;
-    background-color: #007bff;
+    font-size: 14px;
+    background-color: #6c757d;
     color: white;
     cursor: pointer;
-    border-radius: 4px;
-    transition: 0.3s;
+    border-radius: 6px;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 .button-group button:hover {
-    background-color: #0056b3;
+    background-color: #495057;
+    transform: translateY(-2px);
+}
+
+.button-group button:active {
+    background-color: #343a40;
+    transform: translateY(0);
 }
 
 .tag-filter {
@@ -66,33 +77,68 @@
     margin-bottom: 10px;
 }
 
-.tag {
-    padding: 8px 12px;
-    border: 1px solid #ccc;
+.tag,
+.cert {
+    padding: 10px 15px;
+    border: 1px solid #007bff;
     background-color: white;
-    color: black;
+    color: #007bff;
     cursor: pointer;
-    border-radius: 4px;
+    border-radius: 6px;
+    font-size: 14px;
     transition: 0.3s;
 }
 
-.tag-selected {
+.tag:hover,
+.cert:hover {
+    background-color: #e2e6ea;
+}
+
+.tag-selected,
+.cert-selected {
     background-color: #007bff;
+    color: white;
+}
+
+.blacklist {
+    padding: 10px 15px;
+    border: 1px solid #dc3545;
+    background-color: #dc3545;
+    color: white;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+.blacklist:hover {
+    background-color: #c82333;
+}
+
+.blacklist-selected {
+    background-color: #dc3545;
     color: white;
 }
 
 .filter-button {
     display: block;
     margin: 10px auto;
-    padding: 10px 15px;
+    padding: 10px 20px;
     border: none;
     background-color: #28a745;
     color: white;
     cursor: pointer;
-    border-radius: 4px;
+    border-radius: 6px;
+    font-size: 14px;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
     transition: 0.3s;
 }
 
 .filter-button:hover {
     background-color: #218838;
 }
+
+.filter-button:active {
+    background-color: #1e7e34;
+}
+
