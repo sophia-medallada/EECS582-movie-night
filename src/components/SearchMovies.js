@@ -1,21 +1,32 @@
 //Authors: Sophia, Eli, Damian, Matthew and Abraham
 //Date: 2/13/25
-//Last Modified: 3/1/25
+//Last Modified: 3/30/25
 //Purpose: Adds search functionality to the website using the TMDB API
 import "../styles/SearchMovies.css";
 import React, { useState, useEffect } from "react";
 //import { fetchMovies } from "../services/MovieService";
-import { fetchMovies, fetchProviders } from "../services/MovieService";
+import { fetchMovies, fetchProviders, fetchCertifications } from "../services/MovieService";
 
 //list out all the available genres of movies
 const availableTags = ["Action", "Drama", "Comedy", "Horror", "Sci-Fi", "Romance"];
+const availableCertifications = ["G", "PG", "PG-13", "R", "NC-17"];
 
 //adds state of the functional components in the search movies 
 const SearchMovies = () => {
     const [query, setQuery] = useState("");
     const [movies, setMovies] = useState([]);
     const [selectedTags, setSelectedTags] = useState([]);
+    const [selectedCertifications, setSelectedCertifications] = useState([]);
     const [filteredMovies, setFilteredMovies] = useState([]);
+    const [certifications, setCertifications] = useState([]);
+
+    useEffect(() => {
+        const loadCertifications = async () => {
+            const fetchedCerts = await fetchCertifications();
+            setCertifications(fetchedCerts.map(cert => cert.certification)); // Store only certification values
+        };
+        loadCertifications();
+    }, []);
 
     //HandleSearch makes sure search bar is being used properly.
     const handleSearch = async (event) => {
@@ -35,40 +46,52 @@ const SearchMovies = () => {
     };
 
     // Toggles tags on/off when clicked
+    //const toggleTag = (tag) => {
+        //setSelectedTags((prevTags) => {
+            //const newTags = prevTags.includes(tag)
+                //? prevTags.filter((t) => t !== tag)  // Remove if already selected
+                //: [...prevTags, tag]; // Add if not selected
+            //console.log("Updated Selected Tags:", newTags);
+            //return newTags; 
+        //});
+    //};
     const toggleTag = (tag) => {
-        setSelectedTags((prevTags) => {
-            const newTags = prevTags.includes(tag)
-                ? prevTags.filter((t) => t !== tag)  // Remove if already selected
-                : [...prevTags, tag]; // Add if not selected
-            console.log("Updated Selected Tags:", newTags);
-            return newTags; 
-        });
+        setSelectedTags((prevTags) => prevTags.includes(tag) ? prevTags.filter(t => t !== tag) : [...prevTags, tag]);
     };
+
+    const toggleCertification = (cert) => {
+        setSelectedCertifications((prevCerts) =>
+            prevCerts.includes(cert) ? prevCerts.filter((c) => c !== cert) : [...prevCerts, cert]
+        );
+    };
+    
 
     // Apply filtering automatically when tags or movies change
     useEffect(() => {
-        //prints the selected movies from the selected tags
-        console.log("Selected tags:", selectedTags);
-        console.log("Movies before filter:", movies);
-        
-        if (selectedTags.length === 0) {
-            setFilteredMovies(movies);
-            return;
+        let filtered = movies;
+
+        // Filter by genres
+        if (selectedTags.length > 0) {
+            filtered = filtered.filter(movie => 
+                movie.genre_names.some(genre => selectedTags.includes(genre))
+            );
         }
-        
-        const filtered = movies.filter((movie) =>
-            movie.genre_names.some((genre) => selectedTags.includes(genre))
-        );
-        
-        console.log("Movies after filter:", filtered);
+
+        // Filter by certifications
+        if (selectedCertifications.length > 0) {
+            filtered = filtered.filter(movie => 
+                selectedCertifications.includes(movie.certification)
+            );
+        }
+
         setFilteredMovies(filtered);
-    }, [selectedTags, movies]);
+    }, [selectedTags, selectedCertifications, movies]);
+
 
     //Displays the search results on the main webpage in html
     // Placeholder design for now   
     return (
         <div className="search-container">
-            {/*onSubmit adds a form for users to submit queries on a search bar. */}
             <form className="search-bar" onSubmit={handleSearch}>
                 <input
                     type="text"
@@ -78,7 +101,7 @@ const SearchMovies = () => {
                 />
                 <button type="submit">Search</button>
             </form>
-            {/*To submit tags on the selected genres of tags*/}
+
             <div className="tag-filter">
                 {availableTags.map((tag) => (
                     <button
@@ -91,6 +114,18 @@ const SearchMovies = () => {
                 ))}
             </div>
 
+            <div className="certification-filter">
+                {availableCertifications.map((cert) => (
+                    <button
+                        key={cert}
+                        className={selectedCertifications.includes(cert) ? "cert-selected" : "cert"}
+                        onClick={() => toggleCertification(cert)}
+                    >
+                        {cert}
+                    </button>
+                ))}
+            </div>
+
             {/* Movie Results (Filtered) */}
             <div>
                 {filteredMovies.length === 0 ? (
@@ -99,6 +134,7 @@ const SearchMovies = () => {
                     filteredMovies.map((movie) => (
                         <div key={movie.id} className="movie-result">
                             <h3>{movie.title}</h3>
+                            <p>Certification: {movie.certification || "N/A"}</p>
                             <img
                                 src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                                 alt={movie.title}
@@ -130,3 +166,4 @@ const SearchMovies = () => {
 };
 
 export default SearchMovies;
+
