@@ -11,6 +11,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import SearchMovies from "./components/SearchMovies";
 import SchedulePage from "./components/SchedulePage";
 
+
 import './styles/App.css';
 
 
