@@ -19,6 +19,9 @@ const SearchMovies = () => {
     const [selectedCertifications, setSelectedCertifications] = useState([]);
     const [filteredMovies, setFilteredMovies] = useState([]);
     const [certifications, setCertifications] = useState([]);
+    const [isVisible, setIsVisible] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [providers, setProviders] = useState([]);
 
     useEffect(() => {
         const loadCertifications = async () => {
@@ -87,6 +90,19 @@ const SearchMovies = () => {
         setFilteredMovies(filtered);
     }, [selectedTags, selectedCertifications, movies]);
 
+    const handleFetchProviders = async (movieID) => {
+        setIsLoading(true);
+        try{
+            const providersData = await fetchProviders(movieID);
+            setProviders(providersData);
+            setIsVisible(true);
+        }catch (error) {
+            console.error("Failed to load providers in component:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
 
     //Displays the search results on the main webpage in html
     // Placeholder design for now   
@@ -152,9 +168,40 @@ const SearchMovies = () => {
                                     Add to Watch Later
                                 </button>
                                 {/*Button that finds the streaming providers and prints them into the console*/}
-                                <button onClick={() => console.log(fetchProviders(movie.id))}> 
-                                    See Providers
+                                <button onClick={handleFetchProviders(movie.id)}
+                                className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors"
+                                > 
+                                    {isLoading ? "Loading..." : "Show Where to Watch"}
                                 </button>
+                             
+                                {isVisible && (
+                                    <div className="mt-4">
+                                        <h3 className="text-lg font-semibold mb-2">Watch Providers (US)</h3>
+                                        {providers.length > 0 ? (
+                                            <div className="flex flex-wrap gap-4">
+                                                {providers.map((provider) => (
+                                                    <a
+                                                        key={provider.provider_id}
+                                                        href={`https://www.themoviedb.org/movie/${movie.id}/watch`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="flex flex-col items-center hover:opacity-80 transition-opacity"
+                                                    >
+                                                        <img
+                                                            src={`https://image.tmdb.org/t/p/original${provider.logo_path}`}
+                                                            alt={provider.provider_name}
+                                                            className="w-12 h-12 rounded"
+                                                        />
+                                                        <span className="text-sm mt-1">{provider.provider_name}</span>
+                                                    </a>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <p>No US streaming providers found for this title</p>
+                                        )}
+                                    </div>
+                                )
+                                }
                                 
                             </div>
                         </div>
