@@ -168,7 +168,7 @@ const SearchMovies = () => {
                                     Add to Watch Later
                                 </button>
                                 {/*Button that finds the streaming providers and prints them into the console*/}
-                                <button onClick={handleFetchProviders(movie.id)}
+                                <button onClick={() => handleFetchProviders(movie.id)}
                                 className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors"
                                 > 
                                     {isLoading ? "Loading..." : "Show Where to Watch"}
