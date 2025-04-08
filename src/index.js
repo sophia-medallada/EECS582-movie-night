@@ -9,10 +9,14 @@ import './styles/index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+import { ColorModeProvider } from './ColorMode';
+
 const root = ReactDOM.createRoot(document.getElementById('root')); //Creates root, where all will be rendered.
 root.render(
   <React.StrictMode>
-    <App />
+    <ColorModeProvider>
+      <App />
+    </ColorModeProvider>
   </React.StrictMode> // Renders our App element in strict mode
 ); 
 
