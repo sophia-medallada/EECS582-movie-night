@@ -4,7 +4,10 @@
 // Purpose: To display scheduled movies and hold scheduler logic.
 
 import React, { useState } from 'react';
-import '../styles/TimeTable.css';
+import {
+  Box, Typography, TextField, Button, Grid, Table, TableBody, TableCell,
+  TableContainer, TableHead, TableRow, Paper, Stack
+} from '@mui/material';
 
 const TimeTable = ({ initialMovies = [], onMoviesChange, selectedDate }) => {
 
@@ -25,7 +28,7 @@ const TimeTable = ({ initialMovies = [], onMoviesChange, selectedDate }) => {
     color: '#e74c3c'
   });
 
-  // Hours to display -- rolling 24 hour AM/PM schedule, starts at current time with ticks every 3 hours 
+  // Hours to display: rolling 24 hour AM/PM schedule, starts at current time with ticks every 3 hours 
   const now = new Date();
   const currentHour = now.getHours();
   
@@ -90,165 +93,186 @@ const TimeTable = ({ initialMovies = [], onMoviesChange, selectedDate }) => {
   };
   
   return (
-    <div className="movie-scheduler">
-      <h1 className="header">Movie Schedule Planner</h1>
-      
-      {/* Add new movie form */}
-      <div className="form-container">
-        <h2 className="form-title">Add New Movie</h2>
-        <div className="form-grid">
-          <div className="form-group">
-             {/* Movie Title Form */}
-            <label className="label">Movie Title</label>
-            <input
-              type="text"
-              className="input"
-              value={newMovie.title}
-              onChange={(e) => setNewMovie({...newMovie, title: e.target.value})}
-              placeholder="Title"
-            />
-          </div>
-          <div className="form-group">
-            {/* Start time form */}
-            <label className="label">Start Time</label>
-            <input
-              type="time"
-              className="input"
-              value={newMovie.startTime}
-              onChange={(e) => setNewMovie({...newMovie, startTime: e.target.value})}
-              min="08:00"
-              max="20:00"
-            />
-          </div>
-          <div className="form-group">
-            {/* duration form */}
-            <label className="label">Duration (min)</label>
-            <input
-              type="number"
-              className="input"
-              value={newMovie.duration}
-              onChange={(e) => setNewMovie({...newMovie, duration: e.target.value})}
-              placeholder="Duration"
-              min="30"
-              max="300"
-            />
-          </div>
-          <div className="form-group">
-            {/* color form */}
-            {/* Color is the display color on the scheduler */}
-            <label className="label">Color</label>
-            <input
-              type="color"
-              className="input color-input"
-              value={newMovie.color}
-              onChange={(e) => setNewMovie({...newMovie, color: e.target.value})}
-            />
-          </div>
-          <div className="form-group">
-            {/* Button that adds the movie */}
-            <label className="label">&nbsp;</label>
-            <button
-              className="button"
-              onClick={handleAddMovie}
-            >
-              Add Movie
-            </button>
-          </div>
-        </div>
-      </div>
-      
-      {/* Timeline view */}
-      <div className="timeline-container">
-        <h2 className="timeline-title">Hour by Hour Schedule</h2>
-        <div className="timeline">
-          {/* Hour markers */}
-          <div className="hour-markers-container">
-            {hours.map(hour => (
-              <div key={hour} className="hour-marker">
-                <div className="hour-label">
-                  {formatHour(hour)}
-                </div>
-              </div>
-            ))}
-          </div>
+    <Box sx={{ p: 4 }}>
+      <Typography variant="h4" gutterBottom>
+        Movie Schedule Planner
+      </Typography>
 
-          
-          {/* Movie blocks */}
-          {movies.map(movie => { {/* Mapping goes through this code for each movie in the array */}
-            const startMinutes = timeToMinutes(movie.startTime); {/* Gives us start time */}
-            const endMinutes = startMinutes + movie.duration; {/* Figures out end time */}
-            const startPercent = minutesToPercentage(startMinutes); {/* Shows us how much of the timeline to block off */}
-            const durationPercent = (movie.duration / (14 * 60)) * 100; // 14 hours displayed
-            
-            return (
-              <div
-                key={movie.id}
-                className="movie-block"
-                style={{
-                  left: `${startPercent}%`,
-                  width: `${durationPercent}%`,
-                  backgroundColor: movie.color,
+      {/* Add Movie Form */}
+      <Box component={Paper} sx={{ p: 3, mb: 5 }}>
+        <Typography variant="h6" gutterBottom>
+          Add New Movie
+        </Typography>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={3}>
+            <TextField
+              fullWidth
+              label="Movie Title"
+              value={newMovie.title}
+              onChange={(e) => setNewMovie({ ...newMovie, title: e.target.value })}
+            />
+          </Grid>
+          <Grid item xs={12} sm={2}>
+            <TextField
+              fullWidth
+              label="Start Time"
+              type="time"
+              inputProps={{ min: "08:00", max: "20:00" }}
+              value={newMovie.startTime}
+              onChange={(e) => setNewMovie({ ...newMovie, startTime: e.target.value })}
+            />
+          </Grid>
+          <Grid item xs={12} sm={2}>
+            <TextField
+              fullWidth
+              label="Duration (min)"
+              type="number"
+              value={newMovie.duration}
+              inputProps={{ min: 30, max: 300 }}
+              onChange={(e) => setNewMovie({ ...newMovie, duration: e.target.value })}
+            />
+          </Grid>
+          <Grid item xs={12} sm={2}>
+            <TextField
+              fullWidth
+              label="Color"
+              type="color"
+              value={newMovie.color}
+              onChange={(e) => setNewMovie({ ...newMovie, color: e.target.value })}
+              InputLabelProps={{ shrink: true }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <Button fullWidth variant="contained" onClick={handleAddMovie} sx={{ height: '100%' }}>
+              Add Movie
+            </Button>
+          </Grid>
+        </Grid>
+      </Box>
+
+      {/* Timeline */}
+      <Box>
+        <Typography variant="h6" gutterBottom>
+          Hour by Hour Schedule
+        </Typography>
+        <Box
+          sx={{
+            position: 'relative',
+            border: '1px solid',
+            borderColor: 'divider',
+            height: 120,
+            overflow: 'hidden',
+            mb: 4,
+          }}
+        >
+          {/* Hour Markers */}
+          <Stack direction="row" sx={{ height: '100%' }}>
+            {hours.map((hour) => (
+              <Box
+                key={hour}
+                sx={{
+                  width: `${100 / hours.length}%`,
+                  borderRight: '1px solid #ccc',
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  justifyContent: 'center',
+                  pt: 1,
+                  fontSize: '0.875rem',
                 }}
-                title={`${movie.title} (${movie.startTime} - ${minutesToTime(endMinutes)})`}
               >
-                <div className="movie-title">{movie.title}</div>
-                <div className="movie-time">
-                  {movie.startTime} - {minutesToTime(endMinutes)}
-                </div>
-                <div className="movie-duration">{movie.duration} min</div>
-              </div>
+                {formatHour(hour)}
+              </Box>
+            ))}
+          </Stack>
+
+          {/* Movie Blocks */}
+          {movies.map((movie) => {
+            const startMinutes = timeToMinutes(movie.startTime);
+            const endMinutes = startMinutes + movie.duration;
+            const left = minutesToPercentage(startMinutes);
+            const width = (movie.duration / (14 * 60)) * 100;
+
+            return (
+              <Box
+                key={movie.id}
+                sx={{
+                  position: 'absolute',
+                  top: 50,
+                  left: `${left}%`,
+                  width: `${width}%`,
+                  height: 60,
+                  bgcolor: movie.color,
+                  color: '#fff',
+                  p: 1,
+                  borderRadius: 1,
+                  fontSize: '0.75rem',
+                }}
+              >
+                <div><strong>{movie.title}</strong></div>
+                <div>{movie.startTime} – {minutesToTime(endMinutes)}</div>
+                <div>{movie.duration} min</div>
+              </Box>
             );
           })}
-        </div>
-      </div>
-      
-      {/* Movie list */}
-      <div className="list-container">
-        <h2 className="list-title">Scheduled Movies</h2>
-        <table className="movie-table">
-          <thead className="table-head">
-            <tr>
-              <th className="table-head-cell">Movie</th>
-              <th className="table-head-cell">Start Time</th>
-              <th className="table-head-cell">End Time</th>
-              <th className="table-head-cell">Duration</th>
-              <th className="table-head-cell">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="table-body">
-            {movies.map(movie => {
-              const startMinutes = timeToMinutes(movie.startTime);
-              const endMinutes = startMinutes + movie.duration;
-              
-              return (
-                <tr key={movie.id} className="table-row">
-                  <td className="table-cell">
-                    <div className="movie-info">
-                      <span 
-                        className="color-dot"
-                        style={{ backgroundColor: movie.color }}
-                      ></span>
-                      <span>{movie.title}</span>
-                    </div>
-                  </td>
-                  <td className="table-cell">{movie.startTime}</td>
-                  <td className="table-cell">{minutesToTime(endMinutes)}</td>
-                  <td className="table-cell">{movie.duration} minutes</td>
-                  <td className="table-cell">
-                    <button
-                      onClick={() => handleRemoveMovie(movie.id)}
-                      className="remove-button"
-                    >
-                      Remove
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-    </div>
+        </Box>
+      </Box>
+
+      {/* Movie List */}
+      <Box>
+        <Typography variant="h6" gutterBottom>
+          Scheduled Movies
+        </Typography>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Movie</TableCell>
+                <TableCell>Start Time</TableCell>
+                <TableCell>End Time</TableCell>
+                <TableCell>Duration</TableCell>
+                <TableCell>Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {movies.map((movie) => {
+                const startMinutes = timeToMinutes(movie.startTime);
+                const endMinutes = startMinutes + movie.duration;
+                return (
+                  <TableRow key={movie.id}>
+                    <TableCell>
+                      <Stack direction="row" spacing={1} alignItems="center">
+                        <Box
+                          sx={{
+                            width: 12,
+                            height: 12,
+                            borderRadius: '50%',
+                            backgroundColor: movie.color,
+                          }}
+                        />
+                        {movie.title}
+                      </Stack>
+                    </TableCell>
+                    <TableCell>{movie.startTime}</TableCell>
+                    <TableCell>{minutesToTime(endMinutes)}</TableCell>
+                    <TableCell>{movie.duration} min</TableCell>
+                    <TableCell>
+                      <Button
+                        color="error"
+                        variant="outlined"
+                        size="small"
+                        onClick={() => handleRemoveMovie(movie.id)}
+                      >
+                        Remove
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
+    </Box>
   );
 };
 

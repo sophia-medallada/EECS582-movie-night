@@ -2,10 +2,24 @@
 //Date: 2/13/25
 //Last Modified: 3/30/25
 //Purpose: Adds search functionality to the website using the TMDB API
-import "../styles/SearchMovies.css";
+//import "../styles/SearchMovies.css";
 import React, { useState, useEffect } from "react";
 //import { fetchMovies } from "../services/MovieService";
 import { fetchMovies, fetchProviders, fetchCertifications } from "../services/MovieService";
+
+import {
+    Box,
+    Button,
+    Typography,
+    TextField,
+    Stack,
+    Grid,
+    Card,
+    CardMedia,
+    CardContent,
+    CircularProgress,
+    Chip,
+  } from "@mui/material";
 
 //list out all the available genres of movies
 const availableTags = ["Action", "Drama", "Comedy", "Horror", "Sci-Fi", "Romance"];
@@ -107,110 +121,110 @@ const SearchMovies = () => {
     //Displays the search results on the main webpage in html
     // Placeholder design for now   
     return (
-        <div className="search-container">
-            <form className="search-bar" onSubmit={handleSearch}>
-                <input
-                    type="text"
-                    placeholder="Search for a movie..."
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                />
-                <button type="submit">Search</button>
-            </form>
-
-            <div className="tag-filter">
-                {availableTags.map((tag) => (
-                    <button
-                        key={tag}
-                        className={selectedTags.includes(tag) ? "tag-selected" : "tag"}
-                        onClick={() => toggleTag(tag)}
-                    >
-                        {tag}
-                    </button>
-                ))}
-            </div>
-
-            <div className="certification-filter">
-                {availableCertifications.map((cert) => (
-                    <button
-                        key={cert}
-                        className={selectedCertifications.includes(cert) ? "cert-selected" : "cert"}
-                        onClick={() => toggleCertification(cert)}
-                    >
-                        {cert}
-                    </button>
-                ))}
-            </div>
-
-            {/* Movie Results (Filtered) */}
-            <div>
-                {filteredMovies.length === 0 ? (
-                    <p>No movies found for the selected tags.</p>
-                ) : (
-                    filteredMovies.map((movie) => (
-                        <div key={movie.id} className="movie-result">
-                            <h3>{movie.title}</h3>
-                            <p>Certification: {movie.certification || "N/A"}</p>
-                            <img
-                                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                                alt={movie.title}
-                            />
-                            <p>Genres: {movie.genre_names?.join(", ") || "N/A"}</p>
-                            {/*Placeholder buttons for calendar, favorites, watch later, view providers functionality*/} 
-                            <div className="button-group">
-                                <button onClick={() => console.log("Add to Calendar:", movie.title)}>
-                                    Add to Calendar
-                                </button>
-                                <button onClick={() => console.log("Add to Favorites:", movie.title)}>
-                                    Add to Favorites
-                                </button>
-                                <button onClick={() => console.log("Add to Watch Later:", movie.title)}>
-                                    Add to Watch Later
-                                </button>
-                                {/*Button that finds the streaming providers and prints them into the console*/}
-                                <button onClick={() => handleFetchProviders(movie.id)}
-                                className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors"
-                                > 
-                                    {isLoading ? "Loading..." : "Show Where to Watch"}
-                                </button>
-                             
-                                {isVisible && (
-                                    <div className="mt-4">
-                                        <h3 className="text-lg font-semibold mb-2">Watch Providers (US)</h3>
-                                        {providers.length > 0 ? (
-                                            <div className="flex flex-wrap gap-4">
-                                                {providers.map((provider) => (
-                                                    <a
-                                                        key={provider.provider_id}
-                                                        href={`https://www.themoviedb.org/movie/${movie.id}/watch`}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="flex flex-col items-center hover:opacity-80 transition-opacity"
-                                                    >
-                                                        <img
-                                                            src={`https://image.tmdb.org/t/p/original${provider.logo_path}`}
-                                                            alt={provider.provider_name}
-                                                            className="w-12 h-12 rounded"
-                                                        />
-                                                        <span className="text-sm mt-1">{provider.provider_name}</span>
-                                                    </a>
-                                                ))}
-                                            </div>
-                                        ) : (
-                                            <p>No US streaming providers found for this title</p>
-                                        )}
-                                    </div>
-                                )
-                                }
-                                
-                            </div>
-                        </div>
-                    ))
-                )}
-            </div>
-        </div>
-    );
-};
+        <Box sx={{ p: 4 }}>
+          <form onSubmit={handleSearch}>
+            <Stack direction="row" spacing={2} mb={3}>
+              <TextField
+                fullWidth
+                variant="outlined"
+                label="Search for a movie"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+              />
+              <Button type="submit" variant="contained">
+                Search
+              </Button>
+            </Stack>
+          </form>
+    
+          <Stack direction="row" spacing={1} flexWrap="wrap" mb={2}>
+            {availableTags.map((tag) => (
+              <Chip
+                key={tag}
+                label={tag}
+                variant={selectedTags.includes(tag) ? "filled" : "outlined"}
+                color="primary"
+                onClick={() => toggleTag(tag)}
+                sx={{ cursor: "pointer" }}
+              />
+            ))}
+          </Stack>
+    
+          <Stack direction="row" spacing={1} flexWrap="wrap" mb={3}>
+            {availableCertifications.map((cert) => (
+              <Chip
+                key={cert}
+                label={cert}
+                variant={selectedCertifications.includes(cert) ? "filled" : "outlined"}
+                color="secondary"
+                onClick={() => toggleCertification(cert)}
+                sx={{ cursor: "pointer" }}
+              />
+            ))}
+          </Stack>
+    
+          {filteredMovies.length === 0 ? (
+            <Typography>No movies found for the selected filters.</Typography>
+          ) : (
+            <Grid container spacing={3}>
+              {filteredMovies.map((movie) => (
+                <Grid item xs={12} sm={6} md={4} key={movie.id}>
+                  <Card>
+                    <CardMedia
+                      component="img"
+                      height="300"
+                      image={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                      alt={movie.title}
+                    />
+                    <CardContent>
+                      <Typography variant="h6">{movie.title}</Typography>
+                      <Typography variant="body2" gutterBottom>
+                        Certification: {movie.certification || "N/A"}
+                      </Typography>
+                      <Typography variant="body2">
+                        Genres: {movie.genre_names?.join(", ") || "N/A"}
+                      </Typography>
+                      <Stack direction="row" spacing={1} mt={2} flexWrap="wrap">
+                        <Button size="small" variant="outlined" onClick={() => console.log("Calendar", movie.title)}>Add to Calendar</Button>
+                        <Button size="small" variant="outlined" onClick={() => console.log("Favorites", movie.title)}>Add to Favorites</Button>
+                        <Button size="small" variant="outlined" onClick={() => console.log("Watch Later", movie.title)}>Watch Later</Button>
+                        <Button
+                          size="small"
+                          variant="contained"
+                          onClick={() => handleFetchProviders(movie.id)}
+                        >
+                          {isLoading ? <CircularProgress size={16} /> : "Show Where to Watch"}
+                        </Button>
+                      </Stack>
+    
+                      {isVisible && providers.length > 0 && (
+                        <Box mt={2}>
+                          <Typography variant="subtitle2">Providers (US):</Typography>
+                          <Stack direction="row" spacing={2} mt={1} flexWrap="wrap">
+                            {providers.map((provider) => (
+                              <Box key={provider.provider_id} textAlign="center">
+                                <img
+                                  src={`https://image.tmdb.org/t/p/original${provider.logo_path}`}
+                                  alt={provider.provider_name}
+                                  width={48}
+                                  height={48}
+                                  style={{ borderRadius: 6 }}
+                                />
+                                <Typography variant="caption">{provider.provider_name}</Typography>
+                              </Box>
+                            ))}
+                          </Stack>
+                        </Box>
+                      )}
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          )}
+        </Box>
+      );
+    };
 
 export default SearchMovies;
 
