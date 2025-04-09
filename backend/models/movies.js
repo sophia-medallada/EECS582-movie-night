@@ -31,6 +31,10 @@ const movieSchema = new mongoose.Schema({
   watchedDate: {
     type: Date,
     default: null
+  },
+  startTime: {
+    type: String,
+    default: ''
   }
 }, {
   timestamps: true
