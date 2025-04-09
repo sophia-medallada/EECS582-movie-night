@@ -1,4 +1,8 @@
-// models/Movie.js
+// Author: Damian Mendez
+// Date: 4/2/2025
+//Last Modified: 4/9/2025
+//Purpose: Models our movie schema to be used with other mongo api services
+
 const mongoose = require('mongoose');
 
 const movieSchema = new mongoose.Schema({

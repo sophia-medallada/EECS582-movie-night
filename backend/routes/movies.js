@@ -1,10 +1,11 @@
-// routes/movies.js
+// Author: Damian Mendez
+// Date: 4/2/2025
+//Last Modified: 4/2/2025
+//Purpose: Handles the calling and routing of api calls
+
 const express = require('express');
 const router = express.Router();
-const Movie = require('../models/Movie');
-
-const movieRoutes = require('./routes/movies');
-app.use('/api/movies', movieRoutes);
+const Movie = require('../models/movies.js');
 
 // Get all movies
 router.get('/', async (req, res) => {
