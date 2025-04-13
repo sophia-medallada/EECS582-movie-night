@@ -1,6 +1,6 @@
 //Authors: Sophia, Eli, Damian, Matthew and Abraham
 //Date: 2/13/25
-//Last Modified: 3/30/25
+//Last Modified: 4/13/25
 //Purpose: Gets the TMDB API Key and uses it to manage queries.
 
 //API_KEY and BASE_URL are used to get the api keys and make calls for search functionality.
@@ -11,6 +11,7 @@ const BASE_URL = "https://api.themoviedb.org/3";
 // Cache genres to avoid API calls
 let cachedGenres = [];
 let cachedCertifications = [];
+let cachedRecommendations = [];
 
 // Fetch genres once and store them
 export const fetchGenres = async () => {
@@ -95,3 +96,29 @@ export const fetchCertifications = async () => {
         return [];
     }
 };
+
+//fetchces similar movies from the given movie id
+export const fetchSimilarMovies = async (movie_id) => {
+    try {
+    //calls the API key to get similar movies provided by the movie ID
+      const response = await fetch(`${BASE_URL}/movie/${movie_id}/similar?api_key=${API_KEY}`);
+      const data = await response.json();
+    //fetches the genres and certifications of the movie data
+      const genres = await fetchGenres();
+      const certifications = await fetchCertifications();
+    //returns a formated list of the list of similar movies
+      return (data.results || []).map((movie) => ({
+        ...movie,
+        //genre id to genre names
+        genre_names: movie.genre_ids.map((id) =>
+          genres.find((g) => g.id === id)?.name || "Unknown"
+        ).filter(Boolean),
+        certification: certifications.find(cert => cert.movie_id === movie.id)?.certification || "N/A" //remove null values
+      }));
+      //If the query failed, then there will error given in the console about issue.
+    } catch (error) {
+      console.error("Error fetching similar movies:", error);
+      return [];
+    }
+  };
+  
