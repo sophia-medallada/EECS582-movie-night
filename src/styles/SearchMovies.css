@@ -1,7 +1,7 @@
 /* 
 //Authors: Sophia, Eli, Damian, Matthew and Abraham
 //Date: 2/27/25
-//Last Modified: 3/30/25
+//Last Modified: 4/13/25
 */
 
 .SearchMovies {
@@ -140,5 +140,36 @@
 
 .filter-button:active {
     background-color: #1e7e34;
+}
+
+.recommendations {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.recommendations img {
+    width: 60px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 5px;
+}
+
+.recommendations-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.recommendation-item {
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.recommendation-item:hover {
+    transform: scale(1.05);
 }
 
