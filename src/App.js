@@ -12,6 +12,7 @@ import ThemeToggleButton from './ThemeToggle';
 
 import SearchMovies from "./components/SearchMovies";
 import SchedulePage from "./components/SchedulePage";
+import SnackList from "./components/RecSnacks";
 
 
 import './styles/App.css';
@@ -40,6 +41,7 @@ function App() {
             <Route path="/schedule" element={<SchedulePage />} />
           </Routes>
         </Box>
+        <SnackList/>
       </Container>
     </Router>
   );
