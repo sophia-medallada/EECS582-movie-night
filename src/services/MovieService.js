@@ -1,6 +1,6 @@
 //Authors: Sophia, Eli, Damian, Matthew and Abraham
 //Date: 2/13/25
-//Last Modified: 4/13/25
+//Last Modified: 4/15/25
 //Purpose: Gets the TMDB API Key and uses it to manage queries.
 
 //API_KEY and BASE_URL are used to get the api keys and make calls for search functionality.
@@ -11,7 +11,7 @@ const BASE_URL = "https://api.themoviedb.org/3";
 // Cache genres to avoid API calls
 let cachedGenres = [];
 let cachedCertifications = [];
-let cachedRecommendations = [];
+//let cachedRecommendations = [];
 
 // Fetch genres once and store them
 export const fetchGenres = async () => {
@@ -39,21 +39,44 @@ export const fetchMovies = async (query) => {
         const data = await response.json();
 
         const genres = await fetchGenres();
-        const certifications = await fetchCertifications(); // Fetch certifications
+        
+        // Get detailed movie info including certification for each movie
+        const moviesWithDetails = await Promise.all(
+            (data.results || []).map(async (movie) => {
+                try {
+                    const detailsResponse = await fetch(`${BASE_URL}/movie/${movie.id}?api_key=${API_KEY}&append_to_response=release_dates`);
+                    const details = await detailsResponse.json();
+                    
+                    // Find US certification
+                    let certification = "N/A";
+                    if (details.release_dates && details.release_dates.results) {
+                        const usRelease = details.release_dates.results.find(r => r.iso_3166_1 === "US");
+                        if (usRelease && usRelease.release_dates.length > 0) {
+                            certification = usRelease.release_dates[0].certification || "N/A";
+                        }
+                    }
+                    
+                    return {
+                        ...movie,
+                        genre_names: movie.genre_ids.map((id) => 
+                            genres.find((g) => g.id === id)?.name || "Unknown"
+                        ).filter(Boolean),
+                        certification: certification
+                    };
+                } catch (error) {
+                    console.error(`Error fetching details for movie ${movie.id}:`, error);
+                    return {
+                        ...movie,
+                        genre_names: movie.genre_ids.map((id) => 
+                            genres.find((g) => g.id === id)?.name || "Unknown"
+                        ).filter(Boolean),
+                        certification: "N/A"
+                    };
+                }
+            })
+        );
 
-        console.log("Fetched genres:", genres);
-        console.log("Fetched certifications:", certifications);
-
-        return (data.results || []).map((movie) => {
-            const certification = certifications.find(cert => cert.movie_id === movie.id); // Find the certification for the movie
-            return {
-                ...movie,
-                genre_names: movie.genre_ids.map((id) => 
-                    genres.find((g) => g.id === id)?.name || "Unknown"
-                ).filter(Boolean),
-                certification: certification?.certification || "N/A" // Add certification to the movie data
-            };
-        });
+        return moviesWithDetails;
     } catch (error) {
         console.error("Error fetching movies: ", error);
         return [];
@@ -82,14 +105,14 @@ export const fetchProviders = async (movie_id) => {
 export const fetchCertifications = async () => {
     if (cachedCertifications.length > 0) return cachedCertifications;
     try {
-        // Construct request for TMDB API
-        const response = await fetch(`${BASE_URL}/rating/movie/list?api_key=${API_KEY}`);
+        //construct request for TMDB API
+        const response = await fetch(`${BASE_URL}/certification/movie/list?api_key=${API_KEY}`);
         const data = await response.json();
-
-        // Filter for US certifications
+        
+        // This returns the list of possible certifications, not movie-specific ones
         cachedCertifications = data.certifications.US || [];
-        console.log("Fetched certifications:", cachedCertifications);
-
+        console.log("Fetched possible certifications:", cachedCertifications);
+        
         return cachedCertifications;
     } catch (error) {
         console.error("Error fetching certifications: ", error);
@@ -100,25 +123,53 @@ export const fetchCertifications = async () => {
 //fetchces similar movies from the given movie id
 export const fetchSimilarMovies = async (movie_id) => {
     try {
-    //calls the API key to get similar movies provided by the movie ID
-      const response = await fetch(`${BASE_URL}/movie/${movie_id}/similar?api_key=${API_KEY}`);
-      const data = await response.json();
-    //fetches the genres and certifications of the movie data
-      const genres = await fetchGenres();
-      const certifications = await fetchCertifications();
-    //returns a formated list of the list of similar movies
-      return (data.results || []).map((movie) => ({
-        ...movie,
-        //genre id to genre names
-        genre_names: movie.genre_ids.map((id) =>
-          genres.find((g) => g.id === id)?.name || "Unknown"
-        ).filter(Boolean),
-        certification: certifications.find(cert => cert.movie_id === movie.id)?.certification || "N/A" //remove null values
-      }));
-      //If the query failed, then there will error given in the console about issue.
+        //calls the API key to get similar movies provided by the movie ID
+        const response = await fetch(`${BASE_URL}/movie/${movie_id}/similar?api_key=${API_KEY}`);
+        const data = await response.json();
+        //fetches the genres of the movie data
+        const genres = await fetchGenres();
+        
+        //returns a formated list of the list of similar movies
+        const moviesWithDetails = await Promise.all(
+            (data.results || []).map(async (movie) => {
+                try {
+                    const detailsResponse = await fetch(`${BASE_URL}/movie/${movie.id}?api_key=${API_KEY}&append_to_response=release_dates`);
+                    const details = await detailsResponse.json();
+                    
+                    let certification = "N/A";
+                    if (details.release_dates && details.release_dates.results) {
+                        const usRelease = details.release_dates.results.find(r => r.iso_3166_1 === "US");
+                        if (usRelease && usRelease.release_dates.length > 0) {
+                            certification = usRelease.release_dates[0].certification || "N/A";
+                        }
+                    }
+                    //genre id to genre names
+                    return {
+                        ...movie,
+                        genre_names: movie.genre_ids.map((id) =>
+                            genres.find((g) => g.id === id)?.name || "Unknown"
+                        ).filter(Boolean),
+                        certification: certification
+                    };
+                //If the query failed, then there will error given in the console about issue.
+                } catch (error) {
+                    console.error(`Error fetching details for similar movie ${movie.id}:`, error);
+                    return {
+                        ...movie,
+                        genre_names: movie.genre_ids.map((id) =>
+                            genres.find((g) => g.id === id)?.name || "Unknown"
+                        ).filter(Boolean),
+                        certification: "N/A"
+                    };
+                }
+            })
+        );
+
+        return moviesWithDetails;
     } catch (error) {
-      console.error("Error fetching similar movies:", error);
-      return [];
+        console.error("Error fetching similar movies:", error);
+        return [];
     }
-  };
+};
   
+
