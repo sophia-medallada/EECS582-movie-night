@@ -8,7 +8,9 @@ import ThemeToggleButton from './ThemeToggle';
 import SearchMovies from "./components/SearchMovies";
 import SchedulePage from "./components/SchedulePage";
 import SnackList from "./components/RecSnacks";
+import UserAuth from './components/UserAuth';
 import LoginPage from "./components/LoginPage";
+import UserAuthLogout from './components/UserAuthLogout';
 import SettingsDrawer from "./components/SettingsDrawer";
 
 import './styles/App.css';
@@ -27,9 +29,16 @@ function App() {
             <Button color="inherit" component={Link} to="/schedule">
               Schedule
             </Button>
+            <Button color="inherit" component={Link} to="/userauth">
+              Sign Up
+            </Button>
             <Button color="inherit" component={Link} to="/login">
               Login
             </Button>
+            <Button color="inherit" component={Link} to="/logout">
+              Log Out
+            </Button>
+            
             <Button color="inherit" onClick={() => setSettingsOpen(true)}>
               Settings
             </Button>
@@ -42,7 +51,9 @@ function App() {
           <Routes>
             <Route path="/search" element={<SearchMovies />} />
             <Route path="/schedule" element={<SchedulePage />} />
+            <Route path="/userauth" element={<UserAuth />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/logout" element={<UserAuthLogout />} />
           </Routes>
         </Box>
 
