@@ -5,13 +5,14 @@
 
 const express = require('express');
 const router = express.Router();
-const Movie = require('../models/movies.js');
+const Profile = require('../models/profiles.js');
+const profiles = require('../models/profiles.js');
 
 // Get all movies
 router.get('/', async (req, res) => {
   try {
-    const movies = await Movie.find();
-    res.json(movies);
+    const profiles = await Profile.find();
+    res.json(profiles);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -20,9 +21,9 @@ router.get('/', async (req, res) => {
 // Get a movie with a certain ID
 router.get('/:id', async (req, res) => {
   try {
-    const movie = await Movie.findById(req.params.id);
-    if (!movie) return res.status(404).json({ message: 'Movie not found' });
-    res.json(movie);
+    const profile = await Profile.findById(req.params.id);
+    if (!profile) return res.status(404).json({ message: 'Profile not found' });
+    res.json(profile);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -30,10 +31,10 @@ router.get('/:id', async (req, res) => {
 
 // Create a movie
 router.post('/', async (req, res) => {
-  const movie = new Movie(req.body);
+  const profile = new Profile(req.body);
   try {
-    const newMovie = await movie.save();
-    res.status(201).json(newMovie);
+    const newProfile = await profile.save();
+    res.status(201).json(newProfile);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -42,13 +43,13 @@ router.post('/', async (req, res) => {
 // Update a movie with a certain ID
 router.patch('/:id', async (req, res) => {
   try {
-    const movie = await Movie.findByIdAndUpdate(
+    const profile = await Profile.findByIdAndUpdate(
       req.params.id, 
       req.body,
       { new: true }
     );
-    if (!movie) return res.status(404).json({ message: 'Movie not found' });
-    res.json(movie);
+    if (!profile) return res.status(404).json({ message: 'Profile not found' });
+    res.json(profile);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -57,9 +58,9 @@ router.patch('/:id', async (req, res) => {
 // Delete a movie with a certain ID
 router.delete('/:id', async (req, res) => {
   try {
-    const movie = await Movie.findByIdAndDelete(req.params.id);
-    if (!movie) return res.status(404).json({ message: 'Movie not found' });
-    res.json({ message: 'Movie deleted' });
+    const profile = await Profile.findByIdAndDelete(req.params.id);
+    if (!profile) return res.status(404).json({ message: 'Profile not found' });
+    res.json({ message: 'Profile deleted' });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

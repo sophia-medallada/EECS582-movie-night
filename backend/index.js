@@ -11,14 +11,16 @@ require("dotenv").config({path: "./config.env"})
 // Create Express app
 const app = express();
 
-// Middleware
+// App Set Up
 app.use(cors());
 app.use(express.json());
-const movieRoutes = require('./routes/movies');
+const movieRoutes = require('./routes/movies'); //Uses our routes file to define CRUD updates
+const profileRoutes = require('./routes/profiles');
 app.use('/api/movies', movieRoutes);
+app.use('/api/movies', profileRoutes);
 
 // Connect to MongoDB
-mongoose.connect(process.env.ATLAS_URI)
+mongoose.connect(process.env.ATLAS_URI) //Use our URI to connect to Mongo
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('Could not connect to MongoDB', err));
 
