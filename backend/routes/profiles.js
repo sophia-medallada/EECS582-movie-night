@@ -1,14 +1,13 @@
 // Author: Damian Mendez
 // Date: 4/2/2025
-//Last Modified: 4/2/2025
+//Last Modified: 4/26/2025
 //Purpose: Handles the calling and routing of api calls
 
 const express = require('express');
 const router = express.Router();
 const Profile = require('../models/profiles.js');
-const profiles = require('../models/profiles.js');
 
-// Get all movies
+// Get all profiles
 router.get('/', async (req, res) => {
   try {
     const profiles = await Profile.find();
@@ -18,7 +17,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Get a movie with a certain ID
+// Get a profile with a certain ID
 router.get('/:id', async (req, res) => {
   try {
     const profile = await Profile.findById(req.params.id);
@@ -29,7 +28,18 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Create a movie
+// Get a profile with a certain email
+router.get('/:email', async (req, res) => {
+  try {
+    const profile = await Profile.find({email: email});
+    if (!profile) return res.status(404).json({ message: 'Profile not found' });
+    res.json(profile);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Create a profile
 router.post('/', async (req, res) => {
   const profile = new Profile(req.body);
   try {
@@ -40,7 +50,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Update a movie with a certain ID
+// Update a profile with a certain ID
 router.patch('/:id', async (req, res) => {
   try {
     const profile = await Profile.findByIdAndUpdate(
@@ -55,7 +65,7 @@ router.patch('/:id', async (req, res) => {
   }
 });
 
-// Delete a movie with a certain ID
+// Delete a profile with a certain ID
 router.delete('/:id', async (req, res) => {
   try {
     const profile = await Profile.findByIdAndDelete(req.params.id);

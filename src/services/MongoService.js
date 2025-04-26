@@ -82,6 +82,15 @@ export const fetchProfile = async (id) => {
   return response.json();
 };
 
+//Get a Profile with a certain email
+export const fetchProfileByEmail = async (email) => {
+  const response = await fetch(`${API_URL}/profiles/${email}`);
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+  return response.json();
+};
+
 // Create a Profile
 export const createProfile = async (profileData) => {
   const response = await fetch(`${API_URL}/profiles`, {
