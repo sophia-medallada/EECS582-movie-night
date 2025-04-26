@@ -1,8 +1,3 @@
-//Authors: Sophia, Eli, Damian, Matthew and Abraham
-//Date: 4/10/2025
-//Last Modified: 4/25/25
-//Purpose: Gives the user a page of settings
-
 // src/components/SettingsDrawer.js
 
 import React, { useState } from 'react';
@@ -13,16 +8,27 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 
 const SettingsDrawer = ({ open, onClose }) => {
-  const [showTextField, setShowTextField] = useState(false);
-  const [textValue, setTextValue] = useState('');
+  // State for first text field
+  const [showTextField1, setShowTextField1] = useState(false);
+  const [textValue1, setTextValue1] = useState('');
+  
+  // State for second text field
+  const [showTextField2, setShowTextField2] = useState(false);
+  const [textValue2, setTextValue2] = useState('');
+  
+  // State for third text field
+  const [showTextField3, setShowTextField3] = useState(false);
+  const [textValue3, setTextValue3] = useState('');
 
-  const handleToggle = () => {
-    setShowTextField(prevState => !prevState);
-  };
+  // Toggle handlers
+  const handleToggle1 = () => setShowTextField1(prev => !prev);
+  const handleToggle2 = () => setShowTextField2(prev => !prev);
+  const handleToggle3 = () => setShowTextField3(prev => !prev);
 
-  const handleTextChange = (event) => {
-    setTextValue(event.target.value);
-  };
+  // Text change handlers
+  const handleTextChange1 = (event) => setTextValue1(event.target.value);
+  const handleTextChange2 = (event) => setTextValue2(event.target.value);
+  const handleTextChange3 = (event) => setTextValue3(event.target.value);
 
   return (
     <Drawer
@@ -43,36 +49,99 @@ const SettingsDrawer = ({ open, onClose }) => {
           Configure your settings below
         </Typography>
         
-        {/* Toggle Button for Text Field */}
+        {/* First Toggle Button and Text Field */}
         <Box my={2}>
           <Button 
             variant="contained" 
             color="primary" 
-            onClick={handleToggle}
+            onClick={handleToggle1}
             fullWidth
           >
-            {showTextField ? "Change Username" : "Change Username"}
+            {showTextField1 ? "Change Username" : "Change Username"}
           </Button>
+          
+          {showTextField1 && (
+            <Box mt={2}>
+              <TextField
+                fullWidth
+                label="Enter new username"
+                variant="outlined"
+                size="small"
+                value={textValue1}
+                onChange={handleTextChange1}
+              />
+              <Button type="submit" variant="contained">
+                Confirm
+              </Button>
+            </Box>
+          )}
         </Box>
         
-        {/* Conditionally Rendered Text Field */}
-        {showTextField && (
-          <Box my={2}>
-            <TextField
-              fullWidth
-              label="Enter New Username"
-              variant="outlined"
-              size="small"
-              value={textValue}
-              onChange={handleTextChange}
-            />
-          </Box>
-        )}
+        <Divider sx={{ my: 2 }} />
         
-        {/* Additional Settings Can Go Here */}
+        {/* Second Toggle Button and Text Field */}
+        <Box my={2}>
+          <Button 
+            variant="contained" 
+            color="secondary" 
+            onClick={handleToggle2}
+            fullWidth
+          >
+            {showTextField2 ? "Change Password" : "Change Password"}
+          </Button>
+          
+          {showTextField2 && (
+            <Box mt={2}>
+              <TextField
+                fullWidth
+                label="Enter new password"
+                variant="outlined"
+                size="small"
+                value={textValue2}
+                onChange={handleTextChange2}
+              />
+              <Button type="submit" variant="contained">
+                Confirm
+              </Button>
+            </Box>
+          )}
+        </Box>
+        
+        <Divider sx={{ my: 2 }} />
+        
+        {/* Third Toggle Button and Text Field */}
+        <Box my={2}>
+          <Button 
+            variant="outlined" 
+            color="info" 
+            onClick={handleToggle3}
+            fullWidth
+          >
+            {showTextField3 ? "Change Email" : "Change Email"}
+          </Button>
+          
+          {showTextField3 && (
+            <Box mt={2}>
+              <TextField
+                fullWidth
+                label="Enter new email"
+                variant="outlined"
+                size="small"
+                multiline
+                rows={3}
+                value={textValue3}
+                onChange={handleTextChange3}
+              />
+              <Button type="submit" variant="contained">
+                Confirm
+              </Button>
+            </Box>
+          )}
+        </Box>
+        
         <Divider sx={{ my: 2 }} />
         <Typography variant="body2" color="text.secondary">
-          Additional settings can be added here
+          Settings are automatically saved
         </Typography>
       </Box>
     </Drawer>
