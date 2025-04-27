@@ -1,55 +1,47 @@
 // Author: Damian Mendez
-// Date: 4/2/2025
+// Date: 4/26/2025
 //Last Modified: 4/26/2025
 //Purpose: Handles the calling and routing of api calls
 
 const express = require('express');
 const router = express.Router();
-const Profile = require('../models/profiles.js');
+const Calenderlist = require('../models/calenderlist.js');
 
-// Get all profiles
+// Get all lists
 router.get('/', async (req, res) => {
   try {
-    const profiles = await Profile.find();
-    res.json(profiles);
+    const lists = await Calenderlist.find();
+    res.json(lists);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
-// Get a profile with a certain ID
-router.get('/profiles/:id', async (req, res) => {
+// Get a list with a certain ID
+router.get('/:id', async (req, res) => {
   try {
-    const profile = await Profile.findById(req.params.id);
-    if (!profile) return res.status(404).json({ message: 'Profile not found' });
-    res.json(profile);
+    const list = await Calenderlist.findById(req.params.id);
+    if (!list) return res.status(404).json({ message: 'Profile not found' });
+    res.json(list);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
-// Get a profile with a certain email
-router.get('/profiles/email', async (req, res) => {
+// Get a list with a certain date
+router.get('/:date', async (req, res) => {
   try {
-    const email = req.query.email;
-    if (!email) {
-      return res.status(400).json({ message: 'Email parameter is required' });
-    }
-    
-    const profile = await Profile.findOne({ email: email });
-    if (!profile) {
-      return res.status(404).json({ message: 'Profile not found' });
-    }
-    
-    res.json(profile);
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    const list = await Profile.find({date: date});
+    if (!list) return res.status(404).json({ message: 'List not found' });
+    res.json(list);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 });
 
-// Create a profile
+// Create a list
 router.post('/', async (req, res) => {
-  const profile = new Profile(req.body);
+  const list = new Calenderlist(req.body);
   try {
     const newProfile = await profile.save();
     res.status(201).json(newProfile);
@@ -58,7 +50,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Update a profile with a certain ID
+// Update a list with a certain ID
 router.patch('/:id', async (req, res) => {
   try {
     const profile = await Profile.findByIdAndUpdate(
@@ -73,7 +65,7 @@ router.patch('/:id', async (req, res) => {
   }
 });
 
-// Delete a profile with a certain ID
+// Delete a list with a certain ID
 router.delete('/:id', async (req, res) => {
   try {
     const profile = await Profile.findByIdAndDelete(req.params.id);

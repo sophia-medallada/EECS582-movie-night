@@ -14,10 +14,6 @@ list: [{
   type: mongoose.Schema.Types.ObjectId,
   ref: 'Movie'
 }],
-watchlist: [{
-  type: mongoose.Schema.Types.ObjectId,
-  ref: 'Movie'
-}],
 createdAt: {
   type: Date,
   default: Date.now
@@ -26,4 +22,4 @@ createdAt: {
 timestamps: true
 });
 
-module.exports = mongoose.model('Profile', profileSchema);
+module.exports = mongoose.model('Calenderlist', calenderlistSchema);

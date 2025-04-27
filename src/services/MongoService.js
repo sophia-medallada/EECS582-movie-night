@@ -84,7 +84,7 @@ export const fetchProfile = async (id) => {
 
 //Get a Profile with a certain email
 export const fetchProfileByEmail = async (email) => {
-  const response = await fetch(`${API_URL}/profiles/${email}`);
+  const response = await fetch(`${API_URL}/profiles/email?email=${encodeURIComponent(email)}`);
   if (!response.ok) {
     throw new Error('Network response was not ok');
   }
