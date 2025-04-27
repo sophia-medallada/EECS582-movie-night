@@ -17,7 +17,7 @@ app.use(express.json());
 const movieRoutes = require('./routes/movies'); //Uses our routes file to define CRUD updates
 const profileRoutes = require('./routes/profiles');
 app.use('/api/movies', movieRoutes);
-app.use('/api/movies', profileRoutes);
+app.use('/api/profiles', profileRoutes);
 
 // Connect to MongoDB
 mongoose.connect(process.env.ATLAS_URI) //Use our URI to connect to Mongo
