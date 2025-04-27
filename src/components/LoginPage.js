@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 import bcrypt from 'bcryptjs';
-import {fetchProfileByEmail} from "../services/MongoService";
+import {fetchProfiles, fetchProfileByEmail} from "../services/MongoService";
 
 
 const LoginPage = () => {
@@ -39,18 +39,19 @@ const LoginPage = () => {
     e.preventDefault();
     
     try {
-      const user = await fetchProfileByEmail(email);
-      setToken(user);
-      if (user) {
-        const passMatch = bcrypt.compareSync(pass, user.password);
+      const user = await fetchProfiles();
+      const tmp = user.find(i => i.email === email);
+      setToken(tmp);
+      if (tmp) {
+        const passMatch = bcrypt.compareSync(pass, tmp.password);
         if (passMatch === false) {
           setErr({login: "Wrong password!"});
           return;
         }
         setErr({});
-        setToken({user});
-        console.log("User logged:", user);
+        setToken({tmp});
         alert("You are logged in!")
+        window.location.reload();
       }
       else {
         setErr({login: "Email not found."});

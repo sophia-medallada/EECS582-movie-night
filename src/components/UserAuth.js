@@ -5,8 +5,8 @@
 
 import React, { useState, useEffect } from 'react';
 import bcrypt from 'bcryptjs';
-import { Box, Typography } from '@mui/material';
-import {createProfile, fetchProfileByEmail} from "../services/MongoService";
+import { Alert, Box, Typography } from '@mui/material';
+import {fetchProfiles, createProfile, fetchProfileByEmail} from "../services/MongoService";
 
 
 const UserAuth = () => {
@@ -48,25 +48,6 @@ const UserAuth = () => {
     e.preventDefault();
     const emails = e.target.value.toString();
     setEmail(emails);
-    console.log("emails ", emails);
-    try {
-
-      const result = await fetchProfileByEmail(email);
-      console.log("fetchEmail", result);
-      
-      if (result) {  
-        const err = {};
-        err.emailExists = "Email already exists.";
-        setErr(err.emailExists);
-      } else {
-        setErr(prev => {
-          const {emailExists, ...rest} = prev;
-          return rest;
-        });
-      }
-    } catch (error) {
-      console.error("Error with checking email", error);
-    }
   };
 
   const handlePass = (e) => {
@@ -91,13 +72,31 @@ const UserAuth = () => {
         username: username, 
         password: passHash
       };
-      console.log("Creating new profile ", info);
       try {
-        
+        const user = await fetchProfiles();
+        const result = user.find(i => i.email === email);        
+        if (result != null) {  
+          const err = {};
+          err.emailExists = "Email already exists.";
+          setErr(err.emailExists);
+          alert("Email already exists!");
+          console.log("Email exists already! ", result.email);
+          window.location.reload();
+          return;
+        } else {
+          setErr(prev => {
+            const {emailExists, ...rest} = prev;
+            return rest;
+          });
+        }
+
+
         //adds profile to the database
         const databaseResult = await createProfile(info);
         console.log("User created:", databaseResult);
         setToken(databaseResult);
+        alert("Account Created!");
+        window.location.reload();
       } catch (error) {
         console.error("Issues with creating user ", error);
       }
