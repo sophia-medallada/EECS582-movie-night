@@ -1,11 +1,12 @@
 //Authors: Abraham
 //Date: 3/30/25
-//Last Modified: 4/18/25
-//Purpose: Adds functionality for user authentication.
+//Last Modified: 4/27/25
+//Purpose: Adds functionality for user authentication. Password hashing done through bcryptjs
 
 import React, { useState, useEffect } from 'react';
+import bcrypt from 'bcryptjs';
 import { Box, Typography } from '@mui/material';
-
+import {createProfile, fetchProfileByEmail} from "../services/MongoService";
 
 
 const UserAuth = () => {
@@ -39,54 +40,86 @@ const UserAuth = () => {
     if (/([a-z])/g.test(pass) === false) {err.lowerC = "Minimum of 1 lowercase character";}
     if (/([A-Z])/g.test(pass) === false) {err.upperC = "Minimum of 1 uppercase character";}
     if (/([0-9])/g.test(pass) === false) {err.nums = "Minimum of 1 number";}
-    if (/([!#$%&])/g.test(pass) === false) {err.specialC = "Minimum of 1 speical character (!, #, $, %, &)";}
+    if (/([!#$%&-])/g.test(pass) === false) {err.specialC = "Minimum of 1 speical character (!, #, $, %, &)";}
     return err;
-  }
-
-  const handleEmail = (emails) => {
-    const email = emails.target.value;
-    //TODO: Check if Email exists in the database.
-    //TODO: Add email to database if email is not there.
   };
 
-  const handlePass = (password) => {
-    const pass = password.target.value;
-    setPass(pass);
-    setErr(checkPassword(pass));
-    setIsValid(Object.keys(checkPassword(pass)).length === 0);
-    //TODO: Hash and Salt Password and send that to the database.
+  const handleEmail = async (e) => {
+    e.preventDefault();
+    const emails = e.target.value.toString();
+    setEmail(emails);
+    console.log("emails ", emails);
+    try {
+
+      const result = await fetchProfileByEmail(email);
+      console.log("fetchEmail", result);
+      
+      if (result) {  
+        const err = {};
+        err.emailExists = "Email already exists.";
+        setErr(err.emailExists);
+      } else {
+        setErr(prev => {
+          const {emailExists, ...rest} = prev;
+          return rest;
+        });
+      }
+    } catch (error) {
+      console.error("Error with checking email", error);
+    }
   };
 
-  const handleUsername = (user) => {
-    const username = user.target.value;
-    //TODO: Add feature to check if username already exists in the database
+  const handlePass = (e) => {
+    const pas = e.target.value;
+    setPass(pas);
+    setErr(checkPassword(pas));
+    setIsValid(Object.keys(checkPassword(pas)).length === 0);    
   };
 
-  const handleSignUp = async (userInfo) => {
-    const info = {
-      user : username,
-      email : email,
-      pass : pass
-    };
-    setToken({...userToken, [userInfo.target.value]: userInfo.target.value});
-  }
+  const handleUsername = (e) => {
+    const userVal = e.target.value;
+    setUser(userVal);
+  };
+
+  const handleSignUp = async (e) => {
+    
+    e.preventDefault();
+    if (Object.keys(err).length === 0 && isValid) {
+      const passHash = bcrypt.hashSync(pass, bcrypt.genSaltSync(10));
+      const info = {
+        email: email,
+        username: username, 
+        password: passHash
+      };
+      console.log("Creating new profile ", info);
+      try {
+        
+        //adds profile to the database
+        const databaseResult = await createProfile(info);
+        console.log("User created:", databaseResult);
+        setToken(databaseResult);
+      } catch (error) {
+        console.error("Issues with creating user ", error);
+      }
+    }
+  };
 
   return(
     <div id="UserAuthPage">
       <Box p={4}>
         <Typography variant="h4" gutterBottom>Sign Up</Typography>
-        <form onsubmit={handleSignUp} id="SignForm">
+        <form onSubmit={handleSignUp} id="SignForm">
           <label for="email" >Enter Email </label>
-          <input type="email" id="email" value={email} onChange={(userInfo) => (setEmail(userInfo.target.value))} required></input>
+          <input type="email" id="email" value={email} onChange={handleEmail}   required></input>
           <br></br>
         
           <label for="user">Enter Username </label>
-          <input type="username" id="user" value={username} onChange={(userInfo) => (setUser(userInfo.target.value))} required></input>
+          <input type="text" id="user" value={username} onChange={handleUsername}  required></input>
           <br></br>
         
           <label for="pass">Enter Password </label>
-          <input type="password" id="pass" value={pass} onInput={handlePass} required></input>
-          {/*Checks if the conditions of the password (shown in function checkPassword) are met */}
+          <input type="password" id="pass" value={pass} onChange={handlePass} required></input>
+          {/*Checks if the conditions of the password (shown in function checkPassword) are met. */}
           {!isValid && Object.values(err).map((error, index) => (
               <p key={index} style={{color:'red'}}>{error}</p>
           ))}

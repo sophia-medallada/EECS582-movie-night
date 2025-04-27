@@ -23,7 +23,7 @@ const UserAuthLogout = () => {
 
 
   const handleLogOut = (e) => {
-    setToken(null);
+    localStorage.removeItem(userToken);
   };
 
   return (
