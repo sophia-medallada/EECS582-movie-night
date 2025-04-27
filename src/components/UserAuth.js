@@ -92,7 +92,6 @@ const UserAuth = () => {
         } else {
           setErr(prev => {
             const {emailExists, ...rest} = prev;
-            return rest;
           });
         }
         //adds profile to the database
