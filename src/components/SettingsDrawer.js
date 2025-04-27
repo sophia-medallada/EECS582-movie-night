@@ -30,9 +30,9 @@ const SettingsDrawer = ({ open, onClose }) => {
   const handleToggle3 = () => setShowTextField3(prev => !prev);
 
   // Text change handlers
-  const handleUserChange = (event) => setNewUser(event.target.value);    // 1 = Username
-  const handlePassChange = (event) => setNewPass(event.target.value);    // 2 = Password
-  const handleEmailChange = (event) => setNewEmail(event.target.value);  // 3 = Email
+  const handleUserChange = (event) => setNewUser(event.target.value);   
+  const handlePassChange = (event) => setNewPass(event.target.value);
+  const handleEmailChange = (event) => setNewEmail(event.target.value);  
 
   return (
     <Drawer
