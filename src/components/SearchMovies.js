@@ -1,11 +1,14 @@
 //Authors: Sophia, Eli, Damian, Matthew and Abraham
 //Date: 2/13/25
-//Last Modified: 4/13/25
+//Last Modified: 4/27/25
 //Purpose: Adds search functionality to the website using the TMDB API
 
+//imports react
 import React, { useState, useEffect } from "react";
-import { fetchMovies, fetchProviders, fetchCertifications, fetchSimilarMovies } from "../services/MovieService";
+import { fetchMovies, fetchProviders, fetchCertifications, fetchSimilarMovies, fetchMovieCredits } from "../services/MovieService";
+import { Link } from "react-router-dom";
 
+//imports material-ui
 import {
   Box,
   Button,
@@ -20,8 +23,9 @@ import {
   Chip,
 } from "@mui/material";
 
-//list out all the available genres of movies
+// list of available genres
 const availableTags = ["Action", "Drama", "Comedy", "Horror", "Sci-Fi", "Romance"];
+// list of available movie certifications
 const availableCertifications = ["G", "PG", "PG-13", "R", "NC-17"];
 
 //adds state of the functional components in the search movies 
@@ -35,18 +39,23 @@ const SearchMovies = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [providers, setProviders] = useState([]);
-  const [recommendations, setRecommendations] = useState({}); //stores recommendatioons for each movie ID
-  const [loadingRecommendations, setLoadingRecommendations] = useState({}); //loading state for recommendation
+  const [recommendations, setRecommendations] = useState({});
+  const [loadingRecommendations, setLoadingRecommendations] = useState({});
 
+  // new states to manage cast data
+  const [castData, setCastData] = useState({});
+  const [selectedMovieId, setSelectedMovieId] = useState(null);
+
+  // fetch certifications once
   useEffect(() => {
     const loadCertifications = async () => {
       const fetchedCerts = await fetchCertifications();
-      setCertifications(fetchedCerts.map(cert => cert.certification)); // Store only certification values
+      setCertifications(fetchedCerts.map(cert => cert.certification));
     };
     loadCertifications();
   }, []);
 
-  //fetches similar movies of a given movie id and store recommendations 
+  // fetch similar movies for recommendations
   const handleFetchRecommendations = async (movieID) => {
     setLoadingRecommendations(prev => ({ ...prev, [movieID]: true }));
     try {
@@ -63,6 +72,21 @@ const SearchMovies = () => {
     }
   };
 
+  // fetch movie cast and toggle display
+  const handleFetchCast = async (movieID) => {
+    if (castData[movieID]) {
+      setSelectedMovieId(selectedMovieId === movieID ? null : movieID);
+      return;
+    }
+    try {
+      const castList = await fetchMovieCredits(movieID);
+      setCastData(prev => ({ ...prev, [movieID]: castList }));
+      setSelectedMovieId(movieID);
+    } catch (error) {
+      console.error("Error loading cast:", error);
+    }
+  };
+
   //HandleSearch makes sure search bar is being used properly.
   const handleSearch = async (event) => {
     event.preventDefault();
@@ -73,8 +97,8 @@ const SearchMovies = () => {
       const results = await fetchMovies(query);
       console.log("Fetched movies: ", results);
       setMovies(results);
-      setFilteredMovies(results); 
-    //If an error occurs, then it is reported to the console
+      setFilteredMovies(results);
+      //If an error occurs, then it is reported to the console
     } catch (error) {
       console.error("Error in handleSearch", error);
     }
@@ -85,6 +109,7 @@ const SearchMovies = () => {
     setSelectedTags((prevTags) => prevTags.includes(tag) ? prevTags.filter(t => t !== tag) : [...prevTags, tag]);
   };
 
+  // toggle certification selection
   const toggleCertification = (cert) => {
     setSelectedCertifications((prevCerts) =>
       prevCerts.includes(cert) ? prevCerts.filter((c) => c !== cert) : [...prevCerts, cert]
@@ -94,24 +119,22 @@ const SearchMovies = () => {
   // Apply filtering automatically when tags or movies change
   useEffect(() => {
     let filtered = movies;
-
     // Filter by genres
     if (selectedTags.length > 0) {
       filtered = filtered.filter(movie => 
         movie.genre_names.some(genre => selectedTags.includes(genre))
       );
     }
-
     // Filter by certifications
     if (selectedCertifications.length > 0) {
       filtered = filtered.filter(movie => 
         selectedCertifications.includes(movie.certification)
       );
     }
-
     setFilteredMovies(filtered);
   }, [selectedTags, selectedCertifications, movies]);
 
+  // fetch streaming providers for the selected movie
   const handleFetchProviders = async (movieID) => {
     setIsLoading(true);
     try {
@@ -143,7 +166,7 @@ const SearchMovies = () => {
           </Button>
         </Stack>
       </form>
-
+      {/* Genre tag filters */}
       <Stack direction="row" spacing={1} flexWrap="wrap" mb={2}>
         {availableTags.map((tag) => (
           <Chip
@@ -156,7 +179,8 @@ const SearchMovies = () => {
           />
         ))}
       </Stack>
-
+      
+      {/* Certification filters */}
       <Stack direction="row" spacing={1} flexWrap="wrap" mb={3}>
         {availableCertifications.map((cert) => (
           <Chip
@@ -169,11 +193,12 @@ const SearchMovies = () => {
           />
         ))}
       </Stack>
-
+      {/* Movie results section */}
       {filteredMovies.length === 0 ? (
         <Typography>No movies found for the selected filters.</Typography>
       ) : (
         <Grid container spacing={3}>
+          {/* render movie cards */}
           {filteredMovies.map((movie) => (
             <Grid item xs={12} sm={6} md={4} key={movie.id}>
               <Card>
@@ -191,28 +216,23 @@ const SearchMovies = () => {
                   <Typography variant="body2">
                     Genres: {movie.genre_names?.join(", ") || "N/A"}
                   </Typography>
+                  {/* Action buttons */}
                   <Stack direction="row" spacing={1} mt={2} flexWrap="wrap">
                     <Button size="small" variant="outlined" onClick={() => console.log("Calendar", movie.title)}>Add to Calendar</Button>
                     <Button size="small" variant="outlined" onClick={() => console.log("Favorites", movie.title)}>Add to Favorites</Button>
                     <Button size="small" variant="outlined" onClick={() => console.log("Watch Later", movie.title)}>Watch Later</Button>
-                    <Button
-                      size="small"
-                      variant="contained"
-                      onClick={() => handleFetchProviders(movie.id)}
-                    >
+                    <Button size="small" variant="contained" onClick={() => handleFetchProviders(movie.id)}>
                       {isLoading ? <CircularProgress size={16} /> : "Show Where to Watch"}
                     </Button>
-
-                    <Button
-                      size="small"
-                      variant="outlined"
-                      onClick={() => handleFetchRecommendations(movie.id)}
-                      disabled={loadingRecommendations[movie.id]}
-                    >
+                    <Button size="small" variant="outlined" onClick={() => handleFetchRecommendations(movie.id)} disabled={loadingRecommendations[movie.id]}>
                       {loadingRecommendations[movie.id] ? <CircularProgress size={16} /> : "Get Recommendations"}
                     </Button>
+                    <Button size="small" variant="outlined" onClick={() => handleFetchCast(movie.id)}>
+                      {selectedMovieId === movie.id ? "Hide Cast" : "Cast Info"}
+                    </Button>
                   </Stack>
-                  
+
+                  {/* streaming providers section */}
                   {isVisible && providers.length > 0 && (
                     <Box mt={2}>
                       <Typography variant="subtitle2">Providers (US):</Typography>
@@ -232,6 +252,7 @@ const SearchMovies = () => {
                       </Stack>
                     </Box>
                   )}
+
                   {/*Displays movie recommendations */}
                   {recommendations[movie.id] && recommendations[movie.id].length > 0 && (
                     <Box mt={2}>
@@ -240,7 +261,7 @@ const SearchMovies = () => {
                         {recommendations[movie.id].map((recMovie) => (
                           <Grid item xs={4} key={recMovie.id}>
                             <Box textAlign="center">
-                              <img 
+                              <img
                                 src={`https://image.tmdb.org/t/p/w200${recMovie.poster_path}`}
                                 alt={recMovie.title}
                                 width={60}
@@ -250,6 +271,34 @@ const SearchMovies = () => {
                               <Typography variant="caption" display="block">
                                 {recMovie.title}
                               </Typography>
+                            </Box>
+                          </Grid>
+                        ))}
+                      </Grid>
+                    </Box>
+                  )}
+
+                  {/* cast section */}
+                  {selectedMovieId === movie.id && castData[movie.id] && (
+                    <Box mt={2}>
+                      <Typography variant="subtitle2">Cast:</Typography>
+                      <Grid container spacing={1}>
+                        {castData[movie.id].slice(0, 6).map((actor) => (
+                          <Grid item xs={4} key={actor.id}>
+                            <Box textAlign="center">
+                              <img
+                                src={`https://image.tmdb.org/t/p/w200${actor.profile_path}`}
+                                alt={actor.name}
+                                width={60}
+                                height={90}
+                                style={{ borderRadius: 4, objectFit: "cover" }}
+                              />
+                              <Link to={`/actor/${actor.id}`} style={{ textDecoration: "none" }}>
+                                <Typography variant="caption" display="block">
+                                  {actor.name}
+                                </Typography>
+
+                              </Link>
                             </Box>
                           </Grid>
                         ))}
