@@ -131,3 +131,72 @@ export const deleteProfile = async (id) => {
   }
   return response.json();
 };
+
+
+//Get all Lists
+export const fetchLists = async () => {
+  const response = await fetch(`${API_URL}/calenderlists`);
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+  return response.json();
+};
+
+//Get a List with a certain ID
+export const fetchList = async (id) => {
+  const response = await fetch(`${API_URL}/calenderlists/${id}`);
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+  return response.json();
+};
+
+//Get a List with a certain email
+export const fetchListByDate = async (date) => {
+  const response = await fetch(`${API_URL}/calenderlists/date?date=${encodeURIComponent(date)}`);
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+  return response.json();
+};
+
+// Create a List
+export const createList = async (listData) => {
+  const response = await fetch(`${API_URL}/calenderlists`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(listData),
+  });
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+  return response.json();
+};
+
+// Update a list with a certain ID
+export const updateList = async (id, listData) => {
+  const response = await fetch(`${API_URL}/calenderlists/${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(listData),
+  });
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+  return response.json();
+};
+
+// Delete a list with a certain ID
+export const deleteList = async (id) => {
+  const response = await fetch(`${API_URL}/calenderlists/${id}`, {
+    method: 'DELETE',
+  });
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+  return response.json();
+};

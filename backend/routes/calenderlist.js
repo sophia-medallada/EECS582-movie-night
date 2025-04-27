@@ -21,17 +21,6 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const list = await Calenderlist.findById(req.params.id);
-    if (!list) return res.status(404).json({ message: 'Profile not found' });
-    res.json(list);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-// Get a list with a certain date
-router.get('/:date', async (req, res) => {
-  try {
-    const list = await Profile.find({date: date});
     if (!list) return res.status(404).json({ message: 'List not found' });
     res.json(list);
   } catch (err) {
@@ -39,12 +28,31 @@ router.get('/:date', async (req, res) => {
   }
 });
 
+// Get a list with a certain email
+router.get('/Calenderlist/date', async (req, res) => {
+  try {
+    const date = req.query.date;
+    if (!date) {
+      return res.status(400).json({ message: 'Date parameter is required' });
+    }
+    
+    const list = await Calenderlist.findOne({ date: date });
+    if (!list) {
+      return res.status(404).json({ message: 'List not found' });
+    }
+    
+    res.json(list);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
 // Create a list
 router.post('/', async (req, res) => {
   const list = new Calenderlist(req.body);
   try {
-    const newProfile = await profile.save();
-    res.status(201).json(newProfile);
+    const newList= await list.save();
+    res.status(201).json(newList);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -53,13 +61,13 @@ router.post('/', async (req, res) => {
 // Update a list with a certain ID
 router.patch('/:id', async (req, res) => {
   try {
-    const profile = await Profile.findByIdAndUpdate(
+    const list = await Calenderlist.findByIdAndUpdate(
       req.params.id, 
       req.body,
       { new: true }
     );
-    if (!profile) return res.status(404).json({ message: 'Profile not found' });
-    res.json(profile);
+    if (!list) return res.status(404).json({ message: 'List not found' });
+    res.json(list);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -68,9 +76,9 @@ router.patch('/:id', async (req, res) => {
 // Delete a list with a certain ID
 router.delete('/:id', async (req, res) => {
   try {
-    const profile = await Profile.findByIdAndDelete(req.params.id);
-    if (!profile) return res.status(404).json({ message: 'Profile not found' });
-    res.json({ message: 'Profile deleted' });
+    const list = await Calenderlist.findByIdAndDelete(req.params.id);
+    if (!list) return res.status(404).json({ message: 'List not found' });
+    res.json({ message: 'List deleted' });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
