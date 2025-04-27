@@ -1,6 +1,6 @@
 //Authors: Sophia, Eli, Damian, Matthew and Abraham
 //Date: 2/13/25
-//Last Modified: 4/15/25
+//Last Modified: 4/27/25
 //Purpose: Gets the TMDB API Key and uses it to manage queries.
 
 //API_KEY and BASE_URL are used to get the api keys and make calls for search functionality.
@@ -35,9 +35,11 @@ export const fetchGenres = async () => {
 //fetchMovies gets the query from the user and uses the TMDB API to look for it in the database.
 export const fetchMovies = async (query) => {
     try {
+        //search movies by query
         const response = await fetch(`${BASE_URL}/search/movie?api_key=${API_KEY}&query=${query}`);
         const data = await response.json();
 
+        //fetches genres 
         const genres = await fetchGenres();
         
         // Get detailed movie info including certification for each movie
@@ -90,6 +92,7 @@ export const fetchProviders = async (movie_id) => {
         const response = await fetch(`${BASE_URL}/movie/${movie_id}/watch/providers?api_key=${API_KEY}&results=US`);
         const data = await response.json();
         
+        //US providers of the flatrate, rent and buy
         const usProviders = data.results?.US?.flatrate ||
                             data.results?.US?.rent ||
                             data.results?.US?.buy || [];
@@ -102,6 +105,7 @@ export const fetchProviders = async (movie_id) => {
     }
 }
 
+//fetch movie certifications (e.g., PG, PG-13, R)
 export const fetchCertifications = async () => {
     if (cachedCertifications.length > 0) return cachedCertifications;
     try {
@@ -171,5 +175,39 @@ export const fetchSimilarMovies = async (movie_id) => {
         return [];
     }
 };
+  
+//fetchs actors from the given movie
+export const fetchMovieCredits = async (movie_id) => {
+    try {
+        const response = await fetch(`${BASE_URL}/movie/${movie_id}/credits?api_key=${API_KEY}`);
+        const data = await response.json();
+        return data.cast || [];
+    } catch (error) {
+        console.error("Error fetching cast: ", error);
+        return [];
+    }};
+
+//fetch detail information about the actor
+//includes bio and list of movies they're in 
+export const fetchPersonDetails = async (person_id) => {
+    try {
+        const [detailsResponse, creditsResponse] = await Promise.all([
+            fetch(`${BASE_URL}/person/${person_id}?api_key=${API_KEY}`),
+            fetch(`${BASE_URL}/person/${person_id}/movie_credits?api_key=${API_KEY}`)
+        ]);
+    
+        const details = await detailsResponse.json();
+        const credits = await creditsResponse.json();
+    
+        return {
+            ...details,
+            movies: credits.cast || []
+        };
+    } catch (error) {
+        console.error("Error fetching person details:", error);
+        return null;
+        }
+};
+
   
 
