@@ -1,3 +1,7 @@
+//Authors: Sophia, Eli, Damian, Matthew and Abraham
+//Date: 4/20/25
+//Last Modified: 4/26/25
+//Purpose: Settings that allows the user to change their Username, Email, or Password
 // src/components/SettingsDrawer.js
 
 import React, { useState } from 'react';
@@ -10,15 +14,15 @@ import CloseIcon from '@mui/icons-material/Close';
 const SettingsDrawer = ({ open, onClose }) => {
   // State for first text field
   const [showTextField1, setShowTextField1] = useState(false);
-  const [textValue1, setTextValue1] = useState('');
+  const [newUser, setNewUser] = useState('');
   
   // State for second text field
   const [showTextField2, setShowTextField2] = useState(false);
-  const [textValue2, setTextValue2] = useState('');
+  const [newPass, setNewPass] = useState('');
   
   // State for third text field
   const [showTextField3, setShowTextField3] = useState(false);
-  const [textValue3, setTextValue3] = useState('');
+  const [newEmail, setNewEmail] = useState('');
 
   // Toggle handlers
   const handleToggle1 = () => setShowTextField1(prev => !prev);
@@ -26,9 +30,9 @@ const SettingsDrawer = ({ open, onClose }) => {
   const handleToggle3 = () => setShowTextField3(prev => !prev);
 
   // Text change handlers
-  const handleTextChange1 = (event) => setTextValue1(event.target.value);
-  const handleTextChange2 = (event) => setTextValue2(event.target.value);
-  const handleTextChange3 = (event) => setTextValue3(event.target.value);
+  const handleUserChange = (event) => setNewUser(event.target.value);    // 1 = Username
+  const handlePassChange = (event) => setNewPass(event.target.value);    // 2 = Password
+  const handleEmailChange = (event) => setNewEmail(event.target.value);  // 3 = Email
 
   return (
     <Drawer
@@ -67,8 +71,8 @@ const SettingsDrawer = ({ open, onClose }) => {
                 label="Enter new username"
                 variant="outlined"
                 size="small"
-                value={textValue1}
-                onChange={handleTextChange1}
+                value={newUser}
+                onChange={handleUserChange}
               />
               <Button type="submit" variant="contained">
                 Confirm
@@ -97,8 +101,8 @@ const SettingsDrawer = ({ open, onClose }) => {
                 label="Enter new password"
                 variant="outlined"
                 size="small"
-                value={textValue2}
-                onChange={handleTextChange2}
+                value={newPass}
+                onChange={handlePassChange}
               />
               <Button type="submit" variant="contained">
                 Confirm
@@ -129,8 +133,8 @@ const SettingsDrawer = ({ open, onClose }) => {
                 size="small"
                 multiline
                 rows={3}
-                value={textValue3}
-                onChange={handleTextChange3}
+                value={newEmail}
+                onChange={handleEmailChange}
               />
               <Button type="submit" variant="contained">
                 Confirm
