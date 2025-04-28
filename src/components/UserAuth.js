@@ -45,11 +45,13 @@ const UserAuth = () => {
   };
 
   const handleEmail = async (e) => {
+    //updates the email as the user enters their information.
     e.preventDefault();
-    const emails = e.target.value.toString();
+    const emails = e.target.value;
     setEmail(emails);
   };
 
+  //updates the password and checks if the conditions are met.
   const handlePass = (e) => {
     const pas = e.target.value;
     setPass(pas);
@@ -57,24 +59,27 @@ const UserAuth = () => {
     setIsValid(Object.keys(checkPassword(pas)).length === 0);    
   };
 
+  //updates the username.
   const handleUsername = (e) => {
     const userVal = e.target.value;
     setUser(userVal);
   };
 
   const handleSignUp = async (e) => {
-    
     e.preventDefault();
+    //checks if there are any errors.
     if (Object.keys(err).length === 0 && isValid) {
       const passHash = bcrypt.hashSync(pass, bcrypt.genSaltSync(10));
       const info = {
-        email: email,
+        email: email.toLowerCase(),
         username: username, 
         password: passHash
       };
       try {
         const user = await fetchProfiles();
-        const result = user.find(i => i.email === email);        
+        //checks if the email already exists in the database.
+        const result = user.find(i => i.email === email);
+        //user will need to use another email to create an account.
         if (result != null) {  
           const err = {};
           err.emailExists = "Email already exists.";
@@ -83,14 +88,12 @@ const UserAuth = () => {
           console.log("Email exists already! ", result.email);
           window.location.reload();
           return;
+        //user account is created.
         } else {
           setErr(prev => {
             const {emailExists, ...rest} = prev;
-            return rest;
           });
         }
-
-
         //adds profile to the database
         const databaseResult = await createProfile(info);
         console.log("User created:", databaseResult);
