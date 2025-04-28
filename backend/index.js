@@ -1,6 +1,6 @@
 // Author: Damian Mendez
 // Date: 3/13/2025
-//Last Modified: 4/2/2025
+//Last Modified: 4/27/2025
 //Purpose: To create a database connection using MongodbAtlas
 
 const express = require('express');
@@ -17,7 +17,7 @@ app.use(express.json());
 const movieRoutes = require('./routes/movies'); //Uses our routes file to define CRUD updates
 const profileRoutes = require('./routes/profiles');
 const calenderlistRoutes = require('./routes/calenderlists')
-app.use('/api/movies', movieRoutes);
+app.use('/api/movies', movieRoutes); //Defines what the front end calls to reach certain CRUD functionality
 app.use('/api/profiles', profileRoutes);
 app.use('/api/calenderlists', calenderlistRoutes)
 

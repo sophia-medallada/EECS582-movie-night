@@ -1,6 +1,6 @@
 // Author: Damian Mendez
 // Date: 4/26/2025
-//Last Modified: 4/26/2025
+//Last Modified: 4/27/2025
 //Purpose: Models our entry lists for the calender displays
 
 const mongoose = require('mongoose');
